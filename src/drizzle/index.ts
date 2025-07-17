@@ -1,12 +1,9 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import * as schema from "./schema";
 
-const connection = await mysql.createConnection({
-  host: process.env.DB_HOST || "localhost",
-  port: parseInt(process.env.DB_PORT || "3306"),
-  user: process.env.DB_USER || "root",
-  password: process.env.DB_PASS || "",
-  database: process.env.DB_NAME || "nextjs",
+const pool = new Pool({
+  connectionString: process.env.DB_URL!,
 });
 
-export const db = drizzle({ client: connection });
+export const db = drizzle(pool, { schema });
