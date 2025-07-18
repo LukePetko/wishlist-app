@@ -1,9 +1,5 @@
 import { db } from "@/drizzle";
-import { wishlistItems, wishlistLinks } from "@/drizzle/schema";
 import React from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "@/components/DataTable";
-import { WishlistItem } from "@/types";
 import WishlistTable from "@/components/WishlistTable";
 
 const Wishlist = async () => {
