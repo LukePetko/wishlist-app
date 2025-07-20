@@ -1,8 +1,6 @@
 import { db } from "@/drizzle";
 import React from "react";
 import WishlistTable from "@/components/WishlistTable";
-import { wishlistItems } from "@/drizzle/schema";
-import { asc, desc } from "drizzle-orm";
 
 const Wishlist = async ({
   searchParams,
@@ -30,10 +28,7 @@ const Wishlist = async ({
         },
       },
     },
-    orderBy: (
-      wishlist,
-      { asc, desc }
-    ) => {
+    orderBy: (wishlist, { asc, desc }) => {
       if (sort) {
         const [id, dir] = sort;
 
@@ -61,9 +56,9 @@ const Wishlist = async ({
   if (sort && sort[0] === "lowestPrice") {
     processedData.sort((a, b) => {
       if (sort[1] === "asc") {
-        return a.lowestPrice - b.lowestPrice;
+        return +a.lowestPrice - +b.lowestPrice;
       } else {
-        return b.lowestPrice - a.lowestPrice;
+        return +b.lowestPrice - +a.lowestPrice;
       }
     });
   }

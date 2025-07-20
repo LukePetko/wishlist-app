@@ -48,11 +48,11 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
         <div className="flex flex-row gap-8 justify-between w-full">
           <div className="flex flex-col gap-1 justify-between">
             <div className="flex flex-col gap-2">
-              <h3 className="text-xl font-semibold">Description</h3>
+              <h3 className="text-xl font-semibold">Popis</h3>
               <p>{item.description}</p>
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-xl font-semibold">Stores</h3>
+              <h3 className="text-xl font-semibold">Obchody</h3>
               <ul className="flex flex-col">
                 {item.links
                   .sort((a, b) => +a.price - +b.price)

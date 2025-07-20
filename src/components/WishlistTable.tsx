@@ -21,7 +21,7 @@ import { Button } from "./ui/button";
 const columns: ColumnDef<WishlistItem>[] = [
   {
     id: "select",
-    header: "Bought",
+    header: "Kúpené",
     cell: ({ row }) => {
       return (
         <Checkbox
@@ -43,7 +43,7 @@ const columns: ColumnDef<WishlistItem>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="!ml-[-12px]"
         >
-          Name
+          Názov
           <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       );
@@ -58,7 +58,7 @@ const columns: ColumnDef<WishlistItem>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="!ml-[-12px]"
         >
-          Lowest Price
+          Cena
           <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       );
@@ -183,7 +183,7 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
       <div className="flex justify-between">
         <Input
           className="max-w-64"
-          placeholder="Search..."
+          placeholder="Hľadať..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
@@ -193,7 +193,7 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
             onCheckedChange={handleToggle}
             aria-label="isBought"
           />
-          <span className="text-sm">Show bought</span>
+          <span className="text-sm">Zobraziť kúpené</span>
         </label>
       </div>
       <DataTable columns={columns} data={mappedData} table={table} />
