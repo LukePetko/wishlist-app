@@ -3,8 +3,18 @@ import React from "react";
 import WishlistTable from "@/components/WishlistTable";
 import { minioClient } from "@/utils/file-management";
 
-const Wishlist = async () => {
+const Wishlist = async ({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) => {
+  const resolvedParams = await searchParams;
+  const isBought = resolvedParams.bought === "true";
+
   const data = await db.query.wishlistItems.findMany({
+    where: (wishlist, { eq }) => {
+      return isBought ? undefined : eq(wishlist.isBought, false);
+    },
     with: {
       links: {
         with: {
@@ -13,21 +23,6 @@ const Wishlist = async () => {
       },
     },
   });
-
-  const exists = await minioClient.bucketExists("wishlist");
-
-  console.log(exists);
-
-  const presignedUrl = await minioClient.presignedUrl(
-    "GET",
-    "wishlist",
-    "items/switch.png",
-    24 * 60 * 60,
-  );
-
-  console.log(presignedUrl);
-
-  console.log(data);
 
   return (
     <div className="py-12 max-w-7xl mx-auto flex flex-col gap-6">

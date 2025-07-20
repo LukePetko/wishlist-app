@@ -1,5 +1,5 @@
 "use client";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import {
   ColumnDef,
   getCoreRowModel,
@@ -12,6 +12,7 @@ import { Checkbox } from "./ui/checkbox";
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 import WishlistModel from "./WishlistModel";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -67,6 +68,11 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const isBought = searchParams.get("bought") === "true";
+
   useEffect(() => {
     const mappedData = data.map((item) => {
       return {
@@ -97,6 +103,20 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     table.setRowSelection(selection);
   }, [mappedData, table]);
 
+  const handleToggle = useCallback(() => {
+    console.log("toggle");
+    const params = new URLSearchParams(searchParams);
+    const nextValue = (!isBought).toString();
+
+    if (nextValue === "false") {
+      params.delete("bought"); // optional: remove when false
+    } else {
+      params.set("bought", nextValue);
+    }
+
+    router.push(`?${params.toString()}`);
+  }, [isBought, router, searchParams]);
+
   if (!mappedData) {
     return (
       <div className="w-full flex flex-col gap-1">
@@ -107,7 +127,19 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     );
   }
 
-  return <DataTable columns={columns} data={mappedData} table={table} />;
+  return (
+    <>
+      <label className="flex items-center gap-2">
+        <Checkbox
+          checked={isBought}
+          onCheckedChange={handleToggle}
+          aria-label="isBought"
+        />
+        <span className="text-sm">Show bought</span>
+      </label>
+      <DataTable columns={columns} data={mappedData} table={table} />
+    </>
+  );
 };
 
 export default WishlistTable;
