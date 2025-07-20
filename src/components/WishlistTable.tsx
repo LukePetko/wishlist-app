@@ -1,6 +1,10 @@
 "use client";
 import React, { FC, useEffect, useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import { DataTable } from "./DataTable";
 import { WishlistItem } from "@/types";
 import { Skeleton } from "./ui/skeleton";
@@ -12,11 +16,8 @@ import WishlistModel from "./WishlistModel";
 const columns: ColumnDef<WishlistItem>[] = [
   {
     id: "select",
-    accessorKey: "isBought",
     header: "Bought",
-    cell: ({ row, getValue }) => {
-      const value = getValue() as boolean;
-      if (value && !row.getIsSelected()) row.toggleSelected(true);
+    cell: ({ row }) => {
       return (
         <Checkbox
           checked={row.getIsSelected()}
@@ -60,6 +61,12 @@ type WishlistTableProps = {
 const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
   const [mappedData, setMappedData] = useState<WishlistItem[] | null>(null);
 
+  const table = useReactTable({
+    data: mappedData ?? [],
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   useEffect(() => {
     const mappedData = data.map((item) => {
       return {
@@ -76,6 +83,20 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     setMappedData(mappedData);
   }, [data]);
 
+  useEffect(() => {
+    if (!mappedData) return;
+
+    const selection: Record<string, boolean> = {};
+
+    table.getRowModel().rows.forEach((row) => {
+      if (row.original.isBought) {
+        selection[row.id] = true;
+      }
+    });
+
+    table.setRowSelection(selection);
+  }, [mappedData, table]);
+
   if (!mappedData) {
     return (
       <div className="w-full flex flex-col gap-1">
@@ -86,7 +107,7 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     );
   }
 
-  return <DataTable columns={columns} data={mappedData} />;
+  return <DataTable columns={columns} data={mappedData} table={table} />;
 };
 
 export default WishlistTable;

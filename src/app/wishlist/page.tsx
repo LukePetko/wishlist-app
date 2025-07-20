@@ -1,13 +1,31 @@
 import { db } from "@/drizzle";
 import React from "react";
 import WishlistTable from "@/components/WishlistTable";
+import { minioClient } from "@/utils/file-management";
 
 const Wishlist = async () => {
   const data = await db.query.wishlistItems.findMany({
     with: {
-      links: true,
+      links: {
+        with: {
+          store: true,
+        },
+      },
     },
   });
+
+  const exists = await minioClient.bucketExists("wishlist");
+
+  console.log(exists);
+
+  const presignedUrl = await minioClient.presignedUrl(
+    "GET",
+    "wishlist",
+    "items/switch.png",
+    24 * 60 * 60,
+  );
+
+  console.log(presignedUrl);
 
   console.log(data);
 

@@ -25,17 +25,24 @@ export const wishlistItems = pgTable("wishlist_items", {
     .defaultNow(),
 });
 
+// --- stores table ---
+export const stores = pgTable("stores", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  icon: varchar("icon", { length: 2083 }),
+  iconType: varchar("icon_type", { length: 255 }).default("local"),
+});
+
 // --- wishlist_links table ---
 export const wishlistLinks = pgTable(
   "wishlist_links",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     itemId: uuid("item_id").notNull(),
+    storeId: uuid("store_id").notNull(),
     url: varchar("url", { length: 2083 }).notNull(),
     price: decimal("price", { precision: 10, scale: 2 }).notNull(),
     currency: varchar("currency", { length: 3 }).notNull(),
-    storeName: varchar("store_name", { length: 255 }),
-    storeIcon: varchar("store_icon", { length: 2083 }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -49,6 +56,11 @@ export const wishlistLinks = pgTable(
       foreignColumns: [wishlistItems.id],
       name: "fk_wishlist_links_item_id",
     }),
+    storeFk: foreignKey({
+      columns: [wishlistLinks.storeId],
+      foreignColumns: [stores.id],
+      name: "fk_wishlist_links_store_id",
+    }),
   }),
 );
 
@@ -59,8 +71,17 @@ export const wishlistLinksRelations = relations(wishlistLinks, ({ one }) => ({
     references: [wishlistItems.id],
     relationName: "fk_wishlist_links_item_id",
   }),
+  store: one(stores, {
+    fields: [wishlistLinks.storeId],
+    references: [stores.id],
+    relationName: "fk_wishlist_links_store_id",
+  }),
 }));
 
 export const wishlistItemsRelations = relations(wishlistItems, ({ many }) => ({
+  links: many(wishlistLinks),
+}));
+
+export const storesRelations = relations(stores, ({ many }) => ({
   links: many(wishlistLinks),
 }));

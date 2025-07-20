@@ -5,6 +5,7 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
+  type Table as ReactTable,
 } from "@tanstack/react-table";
 
 import {
@@ -19,18 +20,14 @@ import {
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  table: ReactTable<TData>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  table,
 }: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
   return (
     <div className="rounded-md border">
       <Table>
