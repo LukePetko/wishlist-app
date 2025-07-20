@@ -4,15 +4,19 @@ import {
   ColumnDef,
   getCoreRowModel,
   useReactTable,
+  SortingState,
+  getSortedRowModel,
 } from "@tanstack/react-table";
 import { DataTable } from "./DataTable";
 import { WishlistItem } from "@/types";
 import { Skeleton } from "./ui/skeleton";
 import { Checkbox } from "./ui/checkbox";
-import { Button } from "./ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpDown } from "lucide-react";
 import WishlistModel from "./WishlistModel";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useDebounce } from "@/hooks/useDebounce";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -32,15 +36,37 @@ const columns: ColumnDef<WishlistItem>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="!ml-[-12px]"
+        >
+          Name
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "lowestPrice",
-    header: "Lowest Price",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="!ml-[-12px]"
+        >
+          Lowest Price
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ getValue }) => {
       const value = getValue();
 
-      return `$${value}`;
+      return `${value}€`;
     },
   },
   {
@@ -61,32 +87,35 @@ type WishlistTableProps = {
 
 const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
   const [mappedData, setMappedData] = useState<WishlistItem[] | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const isBought = searchParams.get("bought") === "true";
+  const initialFilter = searchParams.get("filter") ?? "";
+  const initialSort = searchParams.get("sort")?.split(".");
+
+  const [filter, setFilter] = useState(initialFilter);
+  const debouncedFilter = useDebounce(filter);
+  const [sorting, setSorting] = useState<SortingState>(
+    initialSort
+      ? [{ id: initialSort[0], desc: initialSort[1] === "desc" }]
+      : [],
+  );
 
   const table = useReactTable({
     data: mappedData ?? [],
     columns,
     getCoreRowModel: getCoreRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting,
+    },
+    manualSorting: true,
   });
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const isBought = searchParams.get("bought") === "true";
-
   useEffect(() => {
-    const mappedData = data.map((item) => {
-      return {
-        ...item,
-        lowestPrice: item.links.reduce((acc, curr) => {
-          if (acc.price > curr.price) {
-            return curr;
-          }
-          return acc;
-        }).price,
-      };
-    });
-
-    setMappedData(mappedData);
+    setMappedData(data);
   }, [data]);
 
   useEffect(() => {
@@ -104,7 +133,6 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
   }, [mappedData, table]);
 
   const handleToggle = useCallback(() => {
-    console.log("toggle");
     const params = new URLSearchParams(searchParams);
     const nextValue = (!isBought).toString();
 
@@ -116,6 +144,29 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 
     router.push(`?${params.toString()}`);
   }, [isBought, router, searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (debouncedFilter) {
+      params.set("filter", debouncedFilter);
+    } else {
+      params.delete("filter");
+    }
+    router.push(`?${params.toString()}`);
+  }, [debouncedFilter, router, searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (sorting.length > 0) {
+      params.set(
+        "sort",
+        `${sorting[0].id}.${sorting[0].desc ? "desc" : "asc"}`,
+      );
+    } else {
+      params.delete("sort");
+    }
+    router.push(`?${params.toString()}`);
+  }, [sorting, router, searchParams]);
 
   if (!mappedData) {
     return (
@@ -129,14 +180,22 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 
   return (
     <>
-      <label className="flex items-center gap-2">
-        <Checkbox
-          checked={isBought}
-          onCheckedChange={handleToggle}
-          aria-label="isBought"
+      <div className="flex justify-between">
+        <Input
+          className="max-w-64"
+          placeholder="Search..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
         />
-        <span className="text-sm">Show bought</span>
-      </label>
+        <label className="flex items-center gap-2">
+          <Checkbox
+            checked={isBought}
+            onCheckedChange={handleToggle}
+            aria-label="isBought"
+          />
+          <span className="text-sm">Show bought</span>
+        </label>
+      </div>
       <DataTable columns={columns} data={mappedData} table={table} />
     </>
   );

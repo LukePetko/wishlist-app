@@ -23,10 +23,10 @@ interface DataTableProps<TData, TValue> {
   table: ReactTable<TData>;
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  table,
+export function DataTable<TData, TValue>({ 
+  columns, 
+  data, 
+  table 
 }: DataTableProps<TData, TValue>) {
   return (
     <div className="rounded-md border">
@@ -41,7 +41,7 @@ export function DataTable<TData, TValue>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )}
                   </TableHead>
                 );
