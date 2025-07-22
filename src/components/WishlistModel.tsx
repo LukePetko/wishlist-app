@@ -59,13 +59,12 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                   .map((link) => (
                     <li
                       key={link.id}
-                      className="not-last-of-type:border-b border-black w-full p-2 flex flex-row gap-2 justify-between"
+                      className="not-last-of-type:border-b border-neutral-400 w-full p-2 flex flex-row gap-2 justify-between"
                     >
                       <div className="flex flex-row gap-2">
-                        {false ? (
+                        {link.store.icon ? (
                           <Image
-                            /* TODO: Add icon */
-                            src={link.store.icon!}
+                            src={`/api/get-image?id=${link.store.icon}`}
                             alt=""
                             width={20}
                             height={20}
@@ -101,9 +100,9 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
               </ul>
             </div>
           </div>
-          {itemImage && (
+          {item.image && (
             <Image
-              src={`/api/image-proxy?url=${encodeURIComponent(itemImage)}`}
+              src={`/api/get-image?id=${item.image}`}
               alt={item.name}
               width={400}
               height={400}
