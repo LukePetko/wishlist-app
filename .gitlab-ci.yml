@@ -1,0 +1,28 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE_NAME: wishlist-app
+  CONTAINER_NAME: wishlist-app
+  PORT: 9201
+
+build:
+  stage: build
+  script:
+    - echo "$ENV_FILE" > .env
+    - docker build -t $IMAGE_NAME .
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+
+deploy:
+  stage: deploy
+  script:
+    - echo "$IMAGE_NAME"
+    - echo "$CONTAINER_NAME"
+    - echo "$PORT"
+    - docker stop $CONTAINER_NAME || true
+    - docker rm $CONTAINER_NAME || true
+    - docker run -d --name $CONTAINER_NAME -p $PORT:$PORT --network bridge $IMAGE_NAME
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'

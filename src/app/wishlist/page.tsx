@@ -5,11 +5,12 @@ import WishlistTable from "@/components/WishlistTable";
 const Wishlist = async ({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) => {
-  const isBought = searchParams.bought === "true";
-  const filter = searchParams.filter as string | undefined;
-  const sort = (searchParams.sort as string | undefined)?.split(".");
+  const awaitedSearchParams = await searchParams;
+  const isBought = awaitedSearchParams.bought === "true";
+  const filter = awaitedSearchParams.filter as string | undefined;
+  const sort = (awaitedSearchParams.sort as string | undefined)?.split(".");
 
   const data = await db.query.wishlistItems.findMany({
     where: (wishlist, { eq, and, ilike }) => {

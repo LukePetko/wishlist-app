@@ -6,5 +6,5 @@ export type WishlistLink = typeof wishlistLinks.$inferSelect & {
 
 export type WishlistItem = typeof wishlistItems.$inferSelect & {
   links: WishlistLink[];
-  lowestPrice: number;
+  lowestPrice: string;
 };
