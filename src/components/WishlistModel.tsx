@@ -21,20 +21,7 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
   item,
   children,
 }) => {
-  const [itemImage, setItemImage] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
-
-  const fetchImage = async () => {
-    const url = await fetch(`/api/generate-url?id=${item.image}`);
-    const data = await url.json();
-    setItemImage(data.url);
-  };
-
-  useEffect(() => {
-    if (item.image && open) {
-      fetchImage();
-    }
-  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

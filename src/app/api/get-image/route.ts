@@ -5,13 +5,6 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
 
-  console.log("Fetching image from MinIO:", {
-    endpoint: process.env.S3_ENDPOINT,
-    port: process.env.S3_PORT,
-    bucket: process.env.S3_BUCKET_NAME,
-    id,
-  });
-
   if (!id) {
     return new Response("No id provided", { status: 400 });
   }
