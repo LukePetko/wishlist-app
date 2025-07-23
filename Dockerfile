@@ -11,7 +11,7 @@ ENV S3_ENDPOINT=$S3_ENDPOINT
 ENV S3_PORT=$S3_PORT
 
 # Install deps and build
-COPY package.json package-lock.json ./
+COPY package.json ./
 RUN npm install
 COPY . .
 
