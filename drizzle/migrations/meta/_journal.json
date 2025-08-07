@@ -15,6 +15,34 @@
       "when": 1753002372823,
       "tag": "0001_naive_wendell_vaughn",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753292843413,
+      "tag": "0002_rainy_random",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1754129462396,
+      "tag": "0003_shiny_enchantress",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1754155269400,
+      "tag": "0004_wooden_shaman",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1754155323916,
+      "tag": "0005_smiling_wallflower",
+      "breakpoints": true
     }
   ]
 }

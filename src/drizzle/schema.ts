@@ -17,6 +17,8 @@ export const wishlistItems = pgTable("wishlist_items", {
   image: varchar("image", { length: 2083 }),
   description: text("description"),
   isBought: boolean("is_bought").notNull().default(false),
+  isOrdered: boolean("is_ordered").notNull().default(false),
+  orderNote: text("order_note"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -55,7 +57,7 @@ export const wishlistLinks = pgTable(
       columns: [wishlistLinks.itemId],
       foreignColumns: [wishlistItems.id],
       name: "fk_wishlist_links_item_id",
-    }),
+    }).onDelete("cascade"),
     storeFk: foreignKey({
       columns: [wishlistLinks.storeId],
       foreignColumns: [stores.id],
@@ -64,19 +66,49 @@ export const wishlistLinks = pgTable(
   }),
 );
 
+export const categories = pgTable("categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+});
+
+export const wishlistItemsCategories = pgTable(
+  "wishlist_items_categories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    itemId: uuid("item_id").notNull(),
+    categoryId: uuid("category_id").notNull(),
+  },
+  (wishlistItemsCategories) => ({
+    itemFk: foreignKey({
+      columns: [wishlistItemsCategories.itemId],
+      foreignColumns: [wishlistItems.id],
+      name: "fk_wishlist_items_categories_item_id",
+    }),
+    categoryFk: foreignKey({
+      columns: [wishlistItemsCategories.categoryId],
+      foreignColumns: [categories.id],
+      name: "fk_wishlist_items_categories_category_id",
+    }),
+  }),
+);
+
 // --- Relations ---
-export const wishlistLinksRelations = relations(wishlistLinks, ({ one }) => ({
-  item: one(wishlistItems, {
-    fields: [wishlistLinks.itemId],
-    references: [wishlistItems.id],
-    relationName: "fk_wishlist_links_item_id",
+export const wishlistLinksRelations = relations(
+  wishlistLinks,
+  ({ one, many }) => ({
+    item: one(wishlistItems, {
+      fields: [wishlistLinks.itemId],
+      references: [wishlistItems.id],
+      relationName: "fk_wishlist_links_item_id",
+    }),
+    store: one(stores, {
+      fields: [wishlistLinks.storeId],
+      references: [stores.id],
+      relationName: "fk_wishlist_links_store_id",
+    }),
+    categories: many(wishlistItemsCategories),
   }),
-  store: one(stores, {
-    fields: [wishlistLinks.storeId],
-    references: [stores.id],
-    relationName: "fk_wishlist_links_store_id",
-  }),
-}));
+);
 
 export const wishlistItemsRelations = relations(wishlistItems, ({ many }) => ({
   links: many(wishlistLinks),
@@ -85,3 +117,23 @@ export const wishlistItemsRelations = relations(wishlistItems, ({ many }) => ({
 export const storesRelations = relations(stores, ({ many }) => ({
   links: many(wishlistLinks),
 }));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  items: many(wishlistItemsCategories),
+}));
+
+export const wishlistItemsCategoriesRelations = relations(
+  wishlistItemsCategories,
+  ({ one }) => ({
+    item: one(wishlistItems, {
+      fields: [wishlistItemsCategories.itemId],
+      references: [wishlistItems.id],
+      relationName: "fk_wishlist_items_categories_item_id",
+    }),
+    category: one(categories, {
+      fields: [wishlistItemsCategories.categoryId],
+      references: [categories.id],
+      relationName: "fk_wishlist_items_categories_category_id",
+    }),
+  }),
+);

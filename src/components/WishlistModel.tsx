@@ -1,16 +1,14 @@
 import { WishlistItem } from "@/types";
-import React, { FC, PropsWithChildren, useEffect, useState } from "react";
+import React, { FC, PropsWithChildren, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { ArrowRight, Store } from "lucide-react";
 
 type WishlistModelProps = {
@@ -28,11 +26,11 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
       <DialogTrigger className="flex items-center justify-center">
         {children}
       </DialogTrigger>
-      <DialogContent className="w-full !max-w-screen-lg px-12 py-8">
+      <DialogContent className="w-11/12 md:w-full !max-w-screen-lg px-12 py-8 max-h-[75vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-3xl">{item.name}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-row gap-8 justify-between w-full">
+        <div className="flex flex-col md:flex-row gap-8 justify-between w-full">
           <div className="flex flex-col gap-1 justify-between">
             <div className="flex flex-col gap-2">
               <h3 className="text-xl font-semibold">Popis</h3>
@@ -93,7 +91,7 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
               alt={item.name}
               width={400}
               height={400}
-              className="rounded-md"
+              className="rounded-md max-h-[50vh] object-contain"
             />
           )}
         </div>
