@@ -65,7 +65,7 @@ const Wishlist = async ({
   }
 
   return (
-    <div className="py-12 max-w-7xl mx-auto flex flex-col gap-6">
+    <div className="py-12 max-w-7xl mx-auto flex flex-col gap-6 px-4">
       <h1 className="text-3xl font-bold">Wishlist</h1>
       <WishlistTable data={processedData} />
     </div>
