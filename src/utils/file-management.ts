@@ -1,9 +1,10 @@
+import ENV from "@/lib/env";
 import * as Minio from "minio";
 
 export const minioClient = new Minio.Client({
-  endPoint: process.env.S3_ENDPOINT!,
-  port: Number(process.env.S3_PORT!),
-  accessKey: process.env.S3_ACCESS_KEY!,
-  secretKey: process.env.S3_SECRET_KEY!,
-  useSSL: process.env.S3_USE_SSL === "true",
+	endPoint: ENV.S3_ENDPOINT,
+	port: Number(ENV.S3_PORT),
+	accessKey: ENV.S3_ACCESS_KEY,
+	secretKey: ENV.S3_SECRET_KEY,
+	useSSL: ENV.S3_USE_SSL === "true",
 });

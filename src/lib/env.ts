@@ -1,0 +1,17 @@
+import z from "zod";
+
+const envSchema = z.object({
+	NEXT_PUBLIC_DRIZZLE_API_URL: z.string(),
+	NEXT_PUBLIC_DRIZZLE_API_KEY: z.string(),
+	S3_BUCKET_NAME: z.string(),
+	S3_ENDPOINT: z.string(),
+	S3_PORT: z.string(),
+	S3_ACCESS_KEY: z.string(),
+	S3_SECRET_KEY: z.string(),
+	S3_USE_SSL: z.string().default("true"),
+	DB_URL: z.string(),
+});
+
+const ENV = envSchema.parse(process.env);
+
+export default ENV;
