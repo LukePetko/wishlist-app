@@ -1,8 +1,6 @@
 import z from "zod";
 
 const envSchema = z.object({
-	NEXT_PUBLIC_DRIZZLE_API_URL: z.string(),
-	NEXT_PUBLIC_DRIZZLE_API_KEY: z.string(),
 	S3_BUCKET_NAME: z.string(),
 	S3_ENDPOINT: z.string(),
 	S3_PORT: z.coerce.number().default(9000),

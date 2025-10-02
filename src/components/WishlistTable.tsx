@@ -145,6 +145,17 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 		router.push(`?${params.toString()}`);
 	}, [isBought, router, searchParams]);
 
+	const handleReserveModeButton = async () => {
+		const res = await fetch("/api/order-mode", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ password: "test" }),
+		});
+
+		const data = await res.json();
+		console.log(data);
+	};
+
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams);
 		if (debouncedFilter) {
@@ -195,6 +206,9 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 					/>
 					<span className="text-sm">Zobraziť kúpené</span>
 				</label>
+				<Button variant="ghost" onClick={handleReserveModeButton}>
+					Zapnúť rezervované
+				</Button>
 			</div>
 			<DataTable columns={columns} table={table} />
 		</>
