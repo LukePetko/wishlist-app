@@ -10,6 +10,7 @@ const envSchema = z.object({
 	S3_SECRET_KEY: z.string(),
 	S3_USE_SSL: z.string().default("true"),
 	DB_URL: z.string(),
+	ORDER_MODE_PASSWORD: z.string(),
 });
 
 const ENV = envSchema.parse(process.env);
