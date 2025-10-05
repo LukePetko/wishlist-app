@@ -35,7 +35,7 @@ const PasswordModal: FC<PropsWithChildren<PasswordModalProps>> = ({
 			<DialogTrigger className="flex items-center justify-center">
 				{children}
 			</DialogTrigger>
-			<DialogContent className="w-11/12 md:w-5/11 !max-w-screen-lg px-12 py-8 max-h-[75vh] overflow-y-auto flex gap-4 flex-col">
+			<DialogContent className="w-11/12 md:w-[400px]!max-w-screen-lg px-12 py-8 max-h-[75vh] overflow-y-auto flex gap-4 flex-col">
 				<div className="flex flex-col gap-2">
 					<DialogTitle className="text-3xl">Režim rezervovaných</DialogTitle>
 					<p className="text-sm">

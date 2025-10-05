@@ -1,5 +1,6 @@
 import ENV from "@/lib/env";
 import { cookies } from "next/headers";
+import argon2 from "argon2";
 
 export async function GET() {
 	const cookieStore = await cookies();
@@ -22,7 +23,7 @@ export async function GET() {
 		return invalidTokenResponse;
 	}
 
-	if (token.value !== ENV.ORDER_MODE_PASSWORD) {
+	if (!(await argon2.verify(token.value, ENV.ORDER_MODE_PASSWORD))) {
 		return invalidTokenResponse;
 	}
 
