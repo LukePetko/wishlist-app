@@ -10,7 +10,7 @@ variables:
 build:
   stage: build
   script:
-    - docker build -t $IMAGE_NAME .
+    - docker build --build-arg S3_ENDPOINT=$S3_ENDPOINT --build-arg S3_PORT=$S3_PORT -t $IMAGE_NAME .
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
