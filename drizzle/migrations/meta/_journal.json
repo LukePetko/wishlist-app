@@ -43,6 +43,13 @@
       "when": 1754155323916,
       "tag": "0005_smiling_wallflower",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1759691303985,
+      "tag": "0006_wandering_fenris",
+      "breakpoints": true
     }
   ]
 }

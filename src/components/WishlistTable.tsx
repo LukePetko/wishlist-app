@@ -84,6 +84,16 @@ const columns: ColumnDef<WishlistItem>[] = [
 	},
 ];
 
+const orderedColumn: ColumnDef<WishlistItem> = {
+	accessorKey: "isOrdered",
+	header: "Objednané",
+	cell: ({ row }) => {
+		return <Checkbox checked={row.getValue("isOrdered")} disabled />;
+	},
+	enableSorting: false,
+	enableHiding: false,
+};
+
 type WishlistTableProps = {
 	data: WishlistItem[];
 };
@@ -107,9 +117,17 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 
 	const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
 
+	const filteredColumns = isLoggedIn
+		? ([
+				columns[0],
+				orderedColumn,
+				...columns.slice(1),
+			] as ColumnDef<WishlistItem>[])
+		: columns;
+
 	const table = useReactTable({
 		data: mappedData ?? [],
-		columns,
+		columns: filteredColumns,
 		getCoreRowModel: getCoreRowModel(),
 		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
@@ -201,6 +219,8 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 		);
 	}
 
+	console.log(data);
+
 	return (
 		<>
 			<div className="flex justify-between">
@@ -230,7 +250,7 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 					</PasswordModal>
 				)}
 			</div>
-			<DataTable columns={columns} table={table} />
+			<DataTable columns={filteredColumns} table={table} />
 		</>
 	);
 };
