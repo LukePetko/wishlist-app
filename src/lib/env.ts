@@ -6,7 +6,7 @@ const envSchema = z.object({
   S3_PORT: z.coerce.number().default(9000),
   S3_ACCESS_KEY: z.string(),
   S3_SECRET_KEY: z.string(),
-  S3_USE_SSL: z.string().default('true'),
+  S3_USE_SSL: z.string().default('false'),
   DB_URL: z.string(),
   ORDER_MODE_PASSWORD: z.string(),
 });
