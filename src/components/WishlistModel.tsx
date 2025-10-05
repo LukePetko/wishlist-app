@@ -11,6 +11,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Store } from 'lucide-react';
 import { Button } from './ui/button';
+import { useAtomValue } from 'jotai';
+import isLoggedInAtom from '@/jotai/loggenInAtom';
 
 type WishlistModelProps = {
   item: WishlistItem;
@@ -21,6 +23,7 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
   children,
 }) => {
   const [open, setOpen] = useState(false);
+  const isLoggedIn = useAtomValue(isLoggedInAtom);
 
   const order = async () => {
     const response = await fetch('/api/create-order', {
@@ -99,13 +102,14 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                   ))}
               </ul>
             </div>
-            {item.isOrdered ? (
-              <p className="text-sm text-gray-500">Objednané</p>
-            ) : (
-              <Button className="w-full" onClick={order}>
-                Nastaviť ako objendané
-              </Button>
-            )}
+            {isLoggedIn &&
+              (item.isOrdered ? (
+                <p className="text-sm text-gray-500">Objednané</p>
+              ) : (
+                <Button className="w-full" onClick={order}>
+                  Nastaviť ako objendané
+                </Button>
+              ))}
           </div>
           {item.image && (
             <Image

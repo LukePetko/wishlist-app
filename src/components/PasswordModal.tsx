@@ -27,6 +27,7 @@ const PasswordModal: FC<PropsWithChildren<PasswordModalProps>> = ({
     if (data.success) {
       setOpen(false);
       setIsLoggedIn(true);
+      setPassword('');
     }
   };
 
@@ -46,13 +47,16 @@ const PasswordModal: FC<PropsWithChildren<PasswordModalProps>> = ({
         <div className="flex flex-col gap-2">
           <Input
             className="w-full"
-            placeholder="Heslo..."
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
           <div className="flex gap-2">
             <Button
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                setOpen(false);
+                setPassword('');
+              }}
               variant="outline"
               className="flex-1"
             >
