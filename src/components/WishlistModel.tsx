@@ -1,15 +1,15 @@
-import { WishlistItem } from "@/types";
-import React, { FC, PropsWithChildren, useState } from "react";
+import { WishlistItem } from '@/types';
+import React, { FC, PropsWithChildren, useState } from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, Store } from "lucide-react";
+} from './ui/dialog';
+import Image from 'next/image';
+import Link from 'next/link';
+import { ArrowRight, Store } from 'lucide-react';
 
 type WishlistModelProps = {
   item: WishlistItem;
@@ -72,8 +72,8 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                           style={{
                             color:
                               link.price === item.lowestPrice.toString()
-                                ? "green"
-                                : "",
+                                ? 'green'
+                                : '',
                           }}
                         >
                           {link.price}€

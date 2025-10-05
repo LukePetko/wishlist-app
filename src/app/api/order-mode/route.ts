@@ -1,22 +1,22 @@
-import ENV from "@/lib/env";
-import { cookies } from "next/headers";
-import argon2 from "argon2";
+import ENV from '@/lib/env';
+import { cookies } from 'next/headers';
+import argon2 from 'argon2';
 
 export async function POST(req: Request) {
-	const body = await req.json();
-	const awaitedCookie = await cookies();
+  const body = await req.json();
+  const awaitedCookie = await cookies();
 
-	if (body.password !== ENV.ORDER_MODE_PASSWORD) {
-		return new Response("Invalid password", { status: 401 });
-	}
+  if (body.password !== ENV.ORDER_MODE_PASSWORD) {
+    return new Response('Invalid password', { status: 401 });
+  }
 
-	const hash = await argon2.hash(body.password);
+  const hash = await argon2.hash(body.password);
 
-	awaitedCookie.set("token", hash, {
-		httpOnly: true,
-		secure: true,
-		path: "/",
-	});
+  awaitedCookie.set('token', hash, {
+    httpOnly: true,
+    secure: true,
+    path: '/',
+  });
 
-	return new Response(JSON.stringify({ success: true }), { status: 200 });
+  return new Response(JSON.stringify({ success: true }), { status: 200 });
 }
