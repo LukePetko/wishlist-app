@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import PasswordModal from "./PasswordModal";
 
 const columns: ColumnDef<WishlistItem>[] = [
 	{
@@ -102,6 +103,8 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 			: [],
 	);
 
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 	const table = useReactTable({
 		data: mappedData ?? [],
 		columns,
@@ -145,17 +148,6 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 		router.push(`?${params.toString()}`);
 	}, [isBought, router, searchParams]);
 
-	const handleReserveModeButton = async () => {
-		const res = await fetch("/api/order-mode", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ password: "test" }),
-		});
-
-		const data = await res.json();
-		console.log(data);
-	};
-
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams);
 		if (debouncedFilter) {
@@ -192,23 +184,29 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 	return (
 		<>
 			<div className="flex justify-between">
-				<Input
-					className="max-w-64"
-					placeholder="Hľadať..."
-					value={filter}
-					onChange={(e) => setFilter(e.target.value)}
-				/>
-				<label className="flex items-center gap-2">
-					<Checkbox
-						checked={isBought}
-						onCheckedChange={handleToggle}
-						aria-label="isBought"
+				<div className="flex items-center gap-2">
+					<Input
+						className="max-w-64"
+						placeholder="Hľadať..."
+						value={filter}
+						onChange={(e) => setFilter(e.target.value)}
 					/>
-					<span className="text-sm">Zobraziť kúpené</span>
-				</label>
-				<Button variant="ghost" onClick={handleReserveModeButton}>
-					Zapnúť rezervované
-				</Button>
+					<label className="flex items-center gap-2 w-full">
+						<Checkbox
+							checked={isBought}
+							onCheckedChange={handleToggle}
+							aria-label="isBought"
+						/>
+						<span className="text-sm">Zobraziť kúpené</span>
+					</label>
+				</div>
+				{isLoggedIn ? (
+					<Button variant="ghost">Odhlásiť</Button>
+				) : (
+					<PasswordModal>
+						<Button variant="ghost">Režim rezervovaných</Button>
+					</PasswordModal>
+				)}
 			</div>
 			<DataTable columns={columns} table={table} />
 		</>
