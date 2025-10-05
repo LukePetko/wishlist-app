@@ -10,6 +10,7 @@
     "db:push": "drizzle-kit push",
     "seed": "bun run src/seed.ts",
     "lint": "biome lint .",
+    "lint:fix": "biome lint . --write",
     "format": "biome format . --write",
     "check": "biome check ."
   },

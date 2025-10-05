@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useState } from 'react';
+import { type FC, type PropsWithChildren, useState } from 'react';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from './ui/dialog';
 import { Input } from './ui/input';
 import { Button } from './ui/button';

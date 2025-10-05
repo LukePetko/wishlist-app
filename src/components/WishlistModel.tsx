@@ -1,5 +1,5 @@
-import { WishlistItem } from '@/types';
-import React, { FC, PropsWithChildren, useState } from 'react';
+import type { WishlistItem } from '@/types';
+import { type FC, type PropsWithChildren, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,6 +10,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Store } from 'lucide-react';
+import { Button } from './ui/button';
 
 type WishlistModelProps = {
   item: WishlistItem;
@@ -20,6 +21,20 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
   children,
 }) => {
   const [open, setOpen] = useState(false);
+
+  const order = async () => {
+    const response = await fetch('/api/create-order', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        itemId: item.id,
+      }),
+    });
+
+    console.log(response);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -84,6 +99,13 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                   ))}
               </ul>
             </div>
+            {item.isOrdered ? (
+              <p className="text-sm text-gray-500">Objednané</p>
+            ) : (
+              <Button className="w-full" onClick={order}>
+                Nastaviť ako objendané
+              </Button>
+            )}
           </div>
           {item.image && (
             <Image

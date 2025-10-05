@@ -1,4 +1,4 @@
-import { stores, wishlistItems, wishlistLinks } from '@/drizzle/schema';
+import type { stores, wishlistItems, wishlistLinks } from '@/drizzle/schema';
 
 export type WishlistLink = typeof wishlistLinks.$inferSelect & {
   store: typeof stores.$inferSelect;

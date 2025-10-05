@@ -1,14 +1,14 @@
 'use client';
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { type FC, useCallback, useEffect, useState } from 'react';
 import {
-  ColumnDef,
+  type ColumnDef,
   getCoreRowModel,
   useReactTable,
-  SortingState,
+  type SortingState,
   getSortedRowModel,
 } from '@tanstack/react-table';
 import { DataTable } from './DataTable';
-import { WishlistItem } from '@/types';
+import type { WishlistItem } from '@/types';
 import { Skeleton } from './ui/skeleton';
 import { Checkbox } from './ui/checkbox';
 import { ArrowRight, ArrowUpDown } from 'lucide-react';

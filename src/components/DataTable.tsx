@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  ColumnDef,
+  type ColumnDef,
   flexRender,
   type Table as ReactTable,
 } from '@tanstack/react-table';

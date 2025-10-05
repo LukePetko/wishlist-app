@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { minioClient } from '@/utils/file-management';
 import ENV from '@/lib/env';
 
