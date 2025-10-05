@@ -2,6 +2,8 @@ import { FC, PropsWithChildren, useState } from "react";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useSetAtom } from "jotai";
+import isLoggedInAtom from "@/jotai/loggenInAtom";
 
 type PasswordModalProps = {
 	children: React.ReactNode;
@@ -12,6 +14,7 @@ const PasswordModal: FC<PropsWithChildren<PasswordModalProps>> = ({
 }) => {
 	const [open, setOpen] = useState(false);
 	const [password, setPassword] = useState("");
+	const setIsLoggedIn = useSetAtom(isLoggedInAtom);
 
 	const handleReserveModeButton = async () => {
 		const res = await fetch("/api/order-mode", {
@@ -20,12 +23,10 @@ const PasswordModal: FC<PropsWithChildren<PasswordModalProps>> = ({
 			body: JSON.stringify({ password }),
 		});
 
-		console.log(res);
-
 		const data = await res.json();
-		console.log(data);
 		if (data.success) {
 			setOpen(false);
+			setIsLoggedIn(true);
 		}
 	};
 

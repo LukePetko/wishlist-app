@@ -18,6 +18,8 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import PasswordModal from "./PasswordModal";
+import { useAtom } from "jotai";
+import isLoggedInAtom from "@/jotai/loggenInAtom";
 
 const columns: ColumnDef<WishlistItem>[] = [
 	{
@@ -103,7 +105,7 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 			: [],
 	);
 
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom);
 
 	const table = useReactTable({
 		data: mappedData ?? [],
@@ -148,6 +150,20 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 		router.push(`?${params.toString()}`);
 	}, [isBought, router, searchParams]);
 
+	const handleCheckLogin = async () => {
+		const res = await fetch("/api/check-cookie");
+		if (res.status === 200) {
+			setIsLoggedIn(true);
+		}
+	};
+
+	const handleLogout = async () => {
+		const res = await fetch("/api/logout");
+		if (res.status === 200) {
+			setIsLoggedIn(false);
+		}
+	};
+
 	useEffect(() => {
 		const params = new URLSearchParams(searchParams);
 		if (debouncedFilter) {
@@ -170,6 +186,10 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 		}
 		router.push(`?${params.toString()}`);
 	}, [sorting, router, searchParams]);
+
+	useEffect(() => {
+		handleCheckLogin();
+	}, []);
 
 	if (!mappedData) {
 		return (
@@ -201,7 +221,9 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 					</label>
 				</div>
 				{isLoggedIn ? (
-					<Button variant="ghost">Odhlásiť</Button>
+					<Button variant="ghost" onClick={handleLogout}>
+						Odhlásiť
+					</Button>
 				) : (
 					<PasswordModal>
 						<Button variant="ghost">Režim rezervovaných</Button>
