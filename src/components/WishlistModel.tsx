@@ -119,9 +119,11 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                   <p className="text-sm text-gray-500">
                     {item.isOrdered ? 'Objendané' : 'Zatiaľ nie je objednané'}
                   </p>
-                  <Button className="w-full" onClick={order}>
-                    Nastaviť ako objendané
-                  </Button>
+                  {!item.isOrdered && (
+                    <Button className="w-full" onClick={order}>
+                      Nastaviť ako objendané
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
