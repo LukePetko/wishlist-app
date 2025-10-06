@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const awaitedCookie = await cookies();
 
   if (body.password !== ENV.ORDER_MODE_PASSWORD) {
-    return new Response('Invalid password', { status: 401 });
+    return new Response(JSON.stringify({ success: false }), { status: 401 });
   }
 
   const hash = await argon2.hash(body.password);

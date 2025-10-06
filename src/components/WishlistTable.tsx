@@ -20,6 +20,7 @@ import { Button } from './ui/button';
 import PasswordModal from './PasswordModal';
 import { useAtom } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
+import { Toaster } from './ui/sonner';
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -226,10 +227,12 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
       <div className="flex justify-between">
         <div className="flex items-center gap-2">
           <Input
+            type="text"
             className="max-w-64"
             placeholder="Hľadať..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
+            autoComplete="wishlist-filter"
           />
           <label className="flex items-center gap-2 w-full">
             <Checkbox
