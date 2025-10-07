@@ -21,6 +21,9 @@ import PasswordModal from './PasswordModal';
 import { useAtom } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
 import { Toaster } from './ui/sonner';
+import codeToSymbol from '@/utils/codeToSymbol';
+import Link from 'next/link';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -52,6 +55,39 @@ const columns: ColumnDef<WishlistItem>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      const nameToLength =
+        row.original.name.length > 40
+          ? `${row.original.name.slice(0, 40)}...`
+          : row.original.name;
+
+      const originalLength = row.original.name.length;
+
+      if (originalLength <= 40) {
+        return (
+          <WishlistModel item={row.original}>
+            <p className="text-sm hover:underline hover:cursor-pointer">
+              {nameToLength}
+            </p>
+          </WishlistModel>
+        );
+      }
+
+      return (
+        <Tooltip>
+          <TooltipTrigger>
+            <WishlistModel item={row.original}>
+              <p className="text-sm hover:underline hover:cursor-pointer">
+                {nameToLength}
+              </p>
+            </WishlistModel>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="text-sm">{row.original.name}</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    },
   },
   {
     accessorKey: 'lowestPrice',
@@ -67,10 +103,13 @@ const columns: ColumnDef<WishlistItem>[] = [
         </Button>
       );
     },
-    cell: ({ getValue }) => {
-      const value = getValue();
+    cell: ({ row }) => {
+      const lowestPrice = row.original.lowestPrice;
+      if (lowestPrice.currency === 'EUR') {
+        return `${lowestPrice.price}€`;
+      }
 
-      return `${value}€`;
+      return `${lowestPrice.price}${codeToSymbol(lowestPrice.currency)} (~${lowestPrice.priceEur}€)`;
     },
   },
   {

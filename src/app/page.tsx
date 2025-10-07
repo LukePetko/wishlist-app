@@ -1,6 +1,7 @@
 import { db } from '@/drizzle';
 import React from 'react';
 import WishlistTable from '@/components/WishlistTable';
+import convertToEur from '@/utils/convertToEur';
 
 const Wishlist = async ({
   searchParams,
@@ -45,16 +46,35 @@ const Wishlist = async ({
     },
   });
 
-  const processedData = data.map((item) => ({
-    ...item,
-    isOrdered: item.orders.length > 0,
-    lowestPrice: item.links.reduce((acc, curr) => {
-      if (acc.price > curr.price) {
-        return curr;
-      }
-      return acc;
-    }).price,
-  }));
+  const processedData = await Promise.all(
+    data.map(async (item) => {
+      const convertedLinks = await Promise.all(
+        item.links.map(async (link) => ({
+          ...link,
+          priceEur:
+            link.currency === 'EUR'
+              ? link.price
+              : (await convertToEur(+link.price, link.currency))
+                  .toFixed(2)
+                  .toString(),
+        })),
+      );
+
+      const lowestPrice = convertedLinks.reduce((acc, curr) => {
+        if (+acc.priceEur > +curr.priceEur) {
+          return curr;
+        }
+        return acc;
+      });
+
+      return {
+        ...item,
+        links: convertedLinks,
+        isOrdered: item.orders.length > 0,
+        lowestPrice,
+      };
+    }),
+  );
 
   if (sort && sort[0] === 'lowestPrice') {
     processedData.sort((a, b) => {
