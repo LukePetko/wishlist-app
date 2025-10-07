@@ -5,6 +5,7 @@ import { createOrder } from '@/app/actions';
 import type { WishlistItem } from '@/types';
 import { toast } from 'sonner';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 type OrderConfirmationModalProps = {
   item: WishlistItem;
@@ -14,11 +15,12 @@ const OrderConfirmationModal: FC<
   PropsWithChildren<OrderConfirmationModalProps>
 > = ({ item, children }) => {
   const [open, setOpen] = useState(false);
+  const [note, setNote] = useState('');
 
   const router = useRouter();
 
   const order = async () => {
-    const response = await createOrder({ itemId: item.id });
+    const response = await createOrder({ itemId: item.id, note });
 
     if (response.ok) {
       router.refresh();
@@ -48,6 +50,15 @@ const OrderConfirmationModal: FC<
           Naozaj chceš nastaviť tento darček ako objednaný? Táto akcia je
           nezvratná.
         </p>
+        <div className="flex flex-col gap-2">
+          <h4 className="text-lg font-semibold">Poznámka</h4>
+          <Input
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Tu môžeš zadať poznámku (voliteľné)"
+            className="w-full"
+          />
+        </div>
         <div className="flex gap-2">
           <Button
             className="flex-1"

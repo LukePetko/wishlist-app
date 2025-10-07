@@ -8,7 +8,7 @@ import { db } from '@/drizzle';
 import { wishlistOrders } from '@/drizzle/schema';
 import { eq } from 'drizzle-orm';
 
-type PlaceOrderInput = { itemId: string };
+type PlaceOrderInput = { itemId: string; note?: string };
 type PlaceOrderResult =
   | { ok: true; data: { id: string; itemId: string } }
   | {
@@ -39,7 +39,7 @@ export async function createOrder(
 
     const [row] = await db
       .insert(wishlistOrders)
-      .values({ itemId: input.itemId, isOrdered: true })
+      .values({ itemId: input.itemId, isOrdered: true, note: input.note })
       .returning({ id: wishlistOrders.id, itemId: wishlistOrders.itemId });
 
     revalidatePath('/wishlist');
