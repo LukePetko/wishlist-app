@@ -13,7 +13,6 @@ import { ArrowRight, Store } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAtomValue } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
-import { useRouter } from 'next/navigation';
 import OrderConfirmationModal from './OrderConfirmationModal';
 
 type WishlistModelProps = {
@@ -26,8 +25,6 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const isLoggedIn = useAtomValue(isLoggedInAtom);
-
-  const router = useRouter();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -99,6 +96,14 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                   <p className="text-sm text-gray-500">
                     {item.isOrdered ? 'Objendané' : 'Zatiaľ nie je objednané'}
                   </p>
+                  {item.orders[0]?.note && (
+                    <p className="text-sm">
+                      Poznámka:{' '}
+                      <span className="text-gray-500">
+                        {item.orders[0].note}
+                      </span>
+                    </p>
+                  )}
                   {!item.isOrdered && (
                     <OrderConfirmationModal item={item}>
                       <Button className="w-full">Nastaviť ako objendané</Button>
