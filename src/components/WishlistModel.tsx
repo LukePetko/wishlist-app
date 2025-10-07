@@ -13,9 +13,8 @@ import { ArrowRight, Store } from 'lucide-react';
 import { Button } from './ui/button';
 import { useAtomValue } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
-import { createOrder } from '@/app/actions';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import OrderConfirmationModal from './OrderConfirmationModal';
 
 type WishlistModelProps = {
   item: WishlistItem;
@@ -29,25 +28,6 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
   const isLoggedIn = useAtomValue(isLoggedInAtom);
 
   const router = useRouter();
-
-  const order = async () => {
-    const response = await createOrder({ itemId: item.id });
-
-    if (response.ok) {
-      router.refresh();
-      return;
-    }
-
-    switch (response.error) {
-      case 'ALREADY_ORDERED':
-        toast.error('Niekto iný už predmet rezervoval, prosím obnov stránku');
-        break;
-      default:
-        toast.error('Pri rezervovaní nastala chyba');
-    }
-
-    console.log(response);
-  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -120,9 +100,9 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                     {item.isOrdered ? 'Objendané' : 'Zatiaľ nie je objednané'}
                   </p>
                   {!item.isOrdered && (
-                    <Button className="w-full" onClick={order}>
-                      Nastaviť ako objendané
-                    </Button>
+                    <OrderConfirmationModal item={item}>
+                      <Button className="w-full">Nastaviť ako objendané</Button>
+                    </OrderConfirmationModal>
                   )}
                 </div>
               )}
