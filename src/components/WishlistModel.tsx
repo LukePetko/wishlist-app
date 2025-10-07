@@ -14,6 +14,7 @@ import { Button } from './ui/button';
 import { useAtomValue } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
 import OrderConfirmationModal from './OrderConfirmationModal';
+import codeToSymbol from '@/utils/codeToSymbol';
 
 type WishlistModelProps = {
   item: WishlistItem;
@@ -77,12 +78,15 @@ const WishlistModal: FC<PropsWithChildren<WishlistModelProps>> = ({
                             className="text-sm font-semibold"
                             style={{
                               color:
-                                link.price === item.lowestPrice.toString()
+                                link.priceEur ===
+                                item.lowestPrice.priceEur.toString()
                                   ? 'green'
                                   : '',
                             }}
                           >
-                            {link.price}€
+                            {link.currency === 'EUR'
+                              ? `${link.price}€`
+                              : `${link.price}${codeToSymbol(link.currency)} (~${link.priceEur}€)`}
                           </p>
                           <ArrowRight className="h-5 p-0 cursor-pointer" />
                         </Link>
