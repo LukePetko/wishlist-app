@@ -20,9 +20,7 @@ import { Button } from './ui/button';
 import PasswordModal from './PasswordModal';
 import { useAtom } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
-import { Toaster } from './ui/sonner';
 import codeToSymbol from '@/utils/codeToSymbol';
-import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 const columns: ColumnDef<WishlistItem>[] = [
@@ -258,8 +256,6 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
       </div>
     );
   }
-
-  console.log(data);
 
   return (
     <>
