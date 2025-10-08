@@ -57,6 +57,13 @@
       "when": 1759951911678,
       "tag": "0007_common_mercury",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1759953593939,
+      "tag": "0008_last_molecule_man",
+      "breakpoints": true
     }
   ]
 }

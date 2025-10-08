@@ -111,7 +111,7 @@ export const wishlistOrders = pgTable('wishlist_orders', {
 export const difficultyLevels = pgTable('difficulty_levels', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: varchar('name', { length: 255 }).notNull(),
-  color: varchar('color', { length: 255 }).notNull(),
+  color: varchar('color', { length: 255 }),
 });
 
 // --- Relations ---
