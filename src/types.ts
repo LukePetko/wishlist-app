@@ -1,4 +1,5 @@
 import type {
+  categories,
   stores,
   wishlistItems,
   wishlistLinks,
@@ -15,4 +16,6 @@ export type WishlistItem = typeof wishlistItems.$inferSelect & {
   isOrdered?: boolean;
   lowestPrice: WishlistLink;
   orders: (typeof wishlistOrders.$inferSelect)[];
+
+  categories: (typeof categories.$inferSelect)[];
 };

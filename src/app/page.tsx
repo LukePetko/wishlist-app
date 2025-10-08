@@ -30,6 +30,11 @@ const Wishlist = async ({
         },
       },
       orders: true,
+      categories: {
+        with: {
+          category: true,
+        },
+      },
     },
     orderBy: (wishlist, { asc, desc }) => {
       if (sort) {
@@ -60,6 +65,8 @@ const Wishlist = async ({
         })),
       );
 
+      const categories = item.categories.map((c) => c.category);
+
       const lowestPrice = convertedLinks.reduce((acc, curr) => {
         if (+acc.priceEur > +curr.priceEur) {
           return curr;
@@ -69,12 +76,15 @@ const Wishlist = async ({
 
       return {
         ...item,
+        categories,
         links: convertedLinks,
         isOrdered: item.orders.length > 0,
         lowestPrice,
       };
     }),
   );
+
+  console.log(processedData);
 
   if (sort && sort[0] === 'lowestPrice') {
     processedData.sort((a, b) => {

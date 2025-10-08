@@ -22,6 +22,8 @@ import { useAtom } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
 import codeToSymbol from '@/utils/codeToSymbol';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { Badge } from './ui/badge';
+import pickVariantFromUuid from '@/utils/pickVarianFromUuid';
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -84,6 +86,44 @@ const columns: ColumnDef<WishlistItem>[] = [
             <p className="text-sm">{row.original.name}</p>
           </TooltipContent>
         </Tooltip>
+      );
+    },
+  },
+  {
+    accessorKey: 'categories',
+    header: 'Kategórie',
+    cell: ({ row }) => {
+      const categories = row.original.categories;
+
+      if (categories.length === 0) {
+        return;
+      }
+
+      if (categories.length === 1) {
+        return <Badge className="!p-1">{categories[0].name}</Badge>;
+      }
+
+      console.log(categories[0].id, pickVariantFromUuid(categories[0].id));
+
+      return (
+        <div className="flex flex-wrap gap-1">
+          <Badge
+            className="!p-1"
+            variant={pickVariantFromUuid(categories[0].id)}
+          >
+            {categories[0].name}
+          </Badge>
+          <Tooltip>
+            <TooltipTrigger>
+              <Badge className="!p-1">+{categories.length - 1}</Badge>
+            </TooltipTrigger>
+            <TooltipContent className="flex flex-col gap-1">
+              {categories.slice(1).map((c) => (
+                <p key={c.id}>{c.name}</p>
+              ))}
+            </TooltipContent>
+          </Tooltip>
+        </div>
       );
     },
   },
