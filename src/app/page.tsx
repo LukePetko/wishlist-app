@@ -35,6 +35,7 @@ const Wishlist = async ({
           category: true,
         },
       },
+      difficultyLevel: true,
     },
     orderBy: (wishlist, { asc, desc }) => {
       if (sort) {

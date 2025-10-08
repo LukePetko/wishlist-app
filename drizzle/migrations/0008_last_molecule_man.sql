@@ -1,0 +1,1 @@
+ALTER TABLE "difficulty_levels" ALTER COLUMN "color" DROP NOT NULL;

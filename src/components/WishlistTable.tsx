@@ -128,6 +128,18 @@ const columns: ColumnDef<WishlistItem>[] = [
     },
   },
   {
+    accessorKey: 'difficultyLevel',
+    header: 'Náročnosť',
+    cell: ({ row }) => {
+      const difficultyLevel = row.original.difficultyLevel;
+      if (!difficultyLevel) {
+        return;
+      }
+
+      return <p>{difficultyLevel.name}</p>;
+    },
+  },
+  {
     accessorKey: 'lowestPrice',
     header: ({ column }) => {
       return (
