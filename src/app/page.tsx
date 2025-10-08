@@ -2,6 +2,8 @@ import { db } from '@/drizzle';
 import React from 'react';
 import WishlistTable from '@/components/WishlistTable';
 import convertToEur from '@/utils/convertToEur';
+import ENV from '@/lib/env';
+import { mockOrders } from '@/mocks';
 
 const Wishlist = async ({
   searchParams,
@@ -29,7 +31,7 @@ const Wishlist = async ({
           store: true,
         },
       },
-      orders: true,
+      orders: ENV.MOCK_ORDERS ? undefined : true,
       categories: {
         with: {
           category: true,
@@ -75,11 +77,18 @@ const Wishlist = async ({
         return acc;
       });
 
+      const orders = ENV.MOCK_ORDERS
+        ? (mockOrders.find((o) => o.id === item.id)?.orders ?? [])
+        : item.orders;
+
+      const isOrdered = orders.length > 0;
+
       return {
         ...item,
         categories,
         links: convertedLinks,
-        isOrdered: item.orders.length > 0,
+        isOrdered,
+        orders,
         lowestPrice,
       };
     }),

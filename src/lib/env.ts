@@ -9,6 +9,8 @@ const envSchema = z.object({
   S3_USE_SSL: z.string().default('false'),
   DB_URL: z.string(),
   ORDER_MODE_PASSWORD: z.string(),
+
+  MOCK_ORDERS: z.coerce.boolean().default(false),
 });
 
 const ENV = envSchema.parse(process.env);
