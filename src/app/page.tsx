@@ -85,8 +85,6 @@ const Wishlist = async ({
     }),
   );
 
-  console.log(processedData);
-
   if (sort && sort[0] === 'lowestPrice') {
     processedData.sort((a, b) => {
       if (sort[1] === 'asc') {

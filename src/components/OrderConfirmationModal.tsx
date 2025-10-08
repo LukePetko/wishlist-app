@@ -35,8 +35,6 @@ const OrderConfirmationModal: FC<
       default:
         toast.error('Pri rezervovaní nastala chyba');
     }
-
-    console.log(response);
   };
 
   return (

@@ -19,5 +19,5 @@ export type WishlistItem = typeof wishlistItems.$inferSelect & {
   orders: (typeof wishlistOrders.$inferSelect)[];
 
   categories: (typeof categories.$inferSelect)[];
-  difficultyLevel?: typeof difficultyLevels.$inferSelect;
+  difficultyLevel: typeof difficultyLevels.$inferSelect | null;
 };

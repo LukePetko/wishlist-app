@@ -103,8 +103,6 @@ const columns: ColumnDef<WishlistItem>[] = [
         return <Badge className="!p-1">{categories[0].name}</Badge>;
       }
 
-      console.log(categories[0].id, pickVariantFromUuid(categories[0].id));
-
       return (
         <div className="flex flex-wrap gap-1">
           <Badge
