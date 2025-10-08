@@ -50,6 +50,13 @@
       "when": 1759691303985,
       "tag": "0006_wandering_fenris",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1759951911678,
+      "tag": "0007_common_mercury",
+      "breakpoints": true
     }
   ]
 }

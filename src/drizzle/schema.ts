@@ -1,31 +1,40 @@
+import { relations } from 'drizzle-orm';
 import {
-  pgTable,
-  uuid,
-  varchar,
   boolean,
   decimal,
-  timestamp,
-  text,
   foreignKey,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
 
 // --- wishlist_items table ---
-export const wishlistItems = pgTable('wishlist_items', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 255 }).notNull(),
-  image: varchar('image', { length: 2083 }),
-  description: text('description'),
-  isBought: boolean('is_bought').notNull().default(false),
-  isOrdered: boolean('is_ordered').notNull().default(false),
-  orderNote: text('order_note'),
-  createdAt: timestamp('created_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const wishlistItems = pgTable(
+  'wishlist_items',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: varchar('name', { length: 255 }).notNull(),
+    image: varchar('image', { length: 2083 }),
+    description: text('description'),
+    isBought: boolean('is_bought').notNull().default(false),
+    difficultyLevel: uuid('difficulty_level'),
+    createdAt: timestamp('created_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (wishlistItems) => ({
+    difficultyLevelFk: foreignKey({
+      columns: [wishlistItems.difficultyLevel],
+      foreignColumns: [difficultyLevels.id],
+      name: 'fk_wishlist_items_difficulty_level',
+    }).onDelete('set null'),
+  }),
+);
 
 // --- stores table ---
 export const stores = pgTable('stores', {
@@ -99,6 +108,12 @@ export const wishlistOrders = pgTable('wishlist_orders', {
   note: text('note'),
 });
 
+export const difficultyLevels = pgTable('difficulty_levels', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  name: varchar('name', { length: 255 }).notNull(),
+  color: varchar('color', { length: 255 }).notNull(),
+});
+
 // --- Relations ---
 export const wishlistLinksRelations = relations(
   wishlistLinks,
@@ -117,11 +132,19 @@ export const wishlistLinksRelations = relations(
   }),
 );
 
-export const wishlistItemsRelations = relations(wishlistItems, ({ many }) => ({
-  links: many(wishlistLinks),
-  orders: many(wishlistOrders),
-  categories: many(wishlistItemsCategories),
-}));
+export const wishlistItemsRelations = relations(
+  wishlistItems,
+  ({ one, many }) => ({
+    links: many(wishlistLinks),
+    orders: many(wishlistOrders),
+    categories: many(wishlistItemsCategories),
+    difficultyLevel: one(difficultyLevels, {
+      fields: [wishlistItems.difficultyLevel],
+      references: [difficultyLevels.id],
+      relationName: 'fk_wishlist_items_difficulty_level',
+    }),
+  }),
+);
 
 export const storesRelations = relations(stores, ({ many }) => ({
   links: many(wishlistLinks),
