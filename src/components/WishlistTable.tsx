@@ -309,6 +309,9 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
   return (
     <>
       <FiltersDesktop
+        difficultyLevels={mappedData
+          .map((d) => d.difficultyLevel)
+          .filter((d) => d !== null)}
         isBought={isBought}
         filter={filter}
         setFilter={setFilter}
