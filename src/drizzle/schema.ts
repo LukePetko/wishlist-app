@@ -120,6 +120,7 @@ export const wishlistLinksRelations = relations(
 export const wishlistItemsRelations = relations(wishlistItems, ({ many }) => ({
   links: many(wishlistLinks),
   orders: many(wishlistOrders),
+  categories: many(wishlistItemsCategories),
 }));
 
 export const storesRelations = relations(stores, ({ many }) => ({
