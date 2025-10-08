@@ -4,6 +4,7 @@ import WishlistTable from '@/components/WishlistTable';
 import convertToEur from '@/utils/convertToEur';
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
+import LoginButton from '@/components/LoginButton';
 
 const Wishlist = async ({
   searchParams,
@@ -106,7 +107,15 @@ const Wishlist = async ({
 
   return (
     <div className="py-12 max-w-7xl mx-auto flex flex-col gap-6 px-4">
-      <h1 className="text-3xl font-bold">Wishlist</h1>
+      <div className="flex w-full justify-between gap-2">
+        <div className="flex items-baseline gap-2">
+          <h1 className="text-3xl font-bold">Wishlist</h1>
+          <p className="text-sm text-gray-500">
+            Vitaj na mojom zozname želaní 🥰
+          </p>
+        </div>
+        <LoginButton />
+      </div>
       <WishlistTable data={processedData} />
     </div>
   );

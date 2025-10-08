@@ -15,15 +15,14 @@ import { ArrowRight, ArrowUpDown } from 'lucide-react';
 import WishlistModel from './WishlistModel';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useDebounce } from '@/hooks/useDebounce';
-import { Input } from './ui/input';
 import { Button } from './ui/button';
-import PasswordModal from './PasswordModal';
 import { useAtom } from 'jotai';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
 import codeToSymbol from '@/utils/codeToSymbol';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { Badge } from './ui/badge';
 import pickVariantFromUuid from '@/utils/pickVarianFromUuid';
+import FiltersDesktop from './FiltersDesktop';
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -309,35 +308,13 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
 
   return (
     <>
-      <div className="flex justify-between">
-        <div className="flex items-center gap-2">
-          <Input
-            type="text"
-            className="max-w-64"
-            placeholder="Hľadať..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            autoComplete="wishlist-filter"
-          />
-          <label className="flex items-center gap-2 w-full">
-            <Checkbox
-              checked={isBought}
-              onCheckedChange={handleToggle}
-              aria-label="isBought"
-            />
-            <span className="text-sm">Zobraziť kúpené</span>
-          </label>
-        </div>
-        {isLoggedIn ? (
-          <Button variant="ghost" onClick={handleLogout}>
-            Odhlásiť
-          </Button>
-        ) : (
-          <PasswordModal>
-            <Button variant="ghost">Režim rezervovaných</Button>
-          </PasswordModal>
-        )}
-      </div>
+      <FiltersDesktop
+        isBought={isBought}
+        filter={filter}
+        setFilter={setFilter}
+        handleToggle={handleToggle}
+        handleLogout={handleLogout}
+      />
       <DataTable columns={filteredColumns} table={table} />
     </>
   );
