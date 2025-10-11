@@ -6,7 +6,13 @@ import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
 import LoginButton from '@/components/LoginButton';
 import FiltersDesktop from '@/components/FiltersDesktop';
-import { difficultyLevels as difficultyLevelsTable } from '@/drizzle/schema';
+import {
+  difficultyLevels as difficultyLevelsTable,
+  categories as categoriesTable,
+  wishlistItemsCategories,
+  wishlistItems,
+} from '@/drizzle/schema';
+import { eq, exists, inArray, or } from 'drizzle-orm';
 
 const Wishlist = async ({
   searchParams,
@@ -17,6 +23,12 @@ const Wishlist = async ({
   const isBought = awaitedSearchParams.bought === 'true';
   const filter = awaitedSearchParams.filter as string | undefined;
   const sort = (awaitedSearchParams.sort as string | undefined)?.split('.');
+  const difficulty = (
+    awaitedSearchParams.difficulty as string | undefined
+  )?.split(',');
+  const category = (awaitedSearchParams.category as string | undefined)?.split(
+    ',',
+  );
 
   const data = await db.query.wishlistItems.findMany({
     where: (wishlist, { eq, and, ilike }) => {
@@ -24,6 +36,28 @@ const Wishlist = async ({
 
       if (filter) {
         conditions.push(ilike(wishlist.name, `%${filter}%`));
+      }
+
+      if (difficulty) {
+        conditions.push(
+          or(...difficulty.map((d) => eq(wishlist.difficultyLevel, d))),
+        );
+      }
+
+      if (category) {
+        conditions.push(
+          exists(
+            db
+              .select()
+              .from(wishlistItemsCategories)
+              .where(
+                and(
+                  eq(wishlistItemsCategories.itemId, wishlist.id),
+                  inArray(wishlistItemsCategories.categoryId, category),
+                ),
+              ),
+          ),
+        );
       }
 
       return and(...conditions.filter((c) => c !== undefined));
@@ -100,6 +134,27 @@ const Wishlist = async ({
   const difficultyLevels = await db
     .select()
     .from(difficultyLevelsTable)
+    .where(
+      exists(
+        db
+          .select()
+          .from(wishlistItems)
+          .where(eq(wishlistItems.difficultyLevel, difficultyLevelsTable.id)),
+      ),
+    )
+    .execute();
+
+  const categories = await db
+    .select()
+    .from(categoriesTable)
+    .where(
+      exists(
+        db
+          .select()
+          .from(wishlistItemsCategories)
+          .where(eq(wishlistItemsCategories.categoryId, categoriesTable.id)),
+      ),
+    )
     .execute();
 
   if (sort && sort[0] === 'lowestPrice') {
@@ -123,7 +178,10 @@ const Wishlist = async ({
         </div>
         <LoginButton />
       </div>
-      <FiltersDesktop difficultyLevels={difficultyLevels} />
+      <FiltersDesktop
+        difficultyLevels={difficultyLevels}
+        categories={categories}
+      />
       <WishlistTable data={processedData} />
     </div>
   );

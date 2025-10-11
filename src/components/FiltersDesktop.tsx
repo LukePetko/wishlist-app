@@ -1,7 +1,7 @@
 'use client';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type FC, useCallback, useEffect, useState } from 'react';
-import type { difficultyLevels } from '@/drizzle/schema';
+import type { categories, difficultyLevels } from '@/drizzle/schema';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
@@ -10,13 +10,18 @@ import { ToggleGroup } from './ui/toggle-group';
 
 type FiltersDesktopProps = {
   difficultyLevels: (typeof difficultyLevels.$inferSelect)[];
+  categories: (typeof categories.$inferSelect)[];
 };
 
-const FiltersDesktop: FC<FiltersDesktopProps> = ({ difficultyLevels }) => {
+const FiltersDesktop: FC<FiltersDesktopProps> = ({
+  difficultyLevels,
+  categories,
+}) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const params = new URLSearchParams(searchParams);
   const difficultyParams = params.get('difficulty');
+  const categoryParams = params.get('category');
   const isBought = searchParams.get('bought') === 'true';
   const initialFilter = searchParams.get('filter') ?? '';
   const [filter, setFilter] = useState(initialFilter);
@@ -25,8 +30,11 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({ difficultyLevels }) => {
   const deduplicatedDifficultyLevels = Array.from(
     new Map(difficultyLevels.map((item) => [item.id, item])).values(),
   );
+  const deduplicatedCategories = Array.from(
+    new Map(categories.map((item) => [item.id, item])).values(),
+  );
 
-  const handleToggle = useCallback(() => {
+  const handleDifficultyToggle = useCallback(() => {
     const params = new URLSearchParams(searchParams);
     const nextValue = (!isBought).toString();
 
@@ -39,7 +47,7 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({ difficultyLevels }) => {
     router.push(`?${params.toString()}`);
   }, [isBought, router, searchParams]);
 
-  const handleCheckboxChange = useCallback(
+  const handleDifficultyChange = useCallback(
     (checkboxId: string, isChecked: boolean) => {
       const params = new URLSearchParams(searchParams);
       const ids = params.get('difficulty')?.split(',') ?? [];
@@ -57,6 +65,29 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({ difficultyLevels }) => {
       }
 
       params.set('difficulty', ids.join(','));
+      router.push(`?${params.toString()}`);
+    },
+    [searchParams, router],
+  );
+
+  const handleCategoryToggle = useCallback(
+    (checkboxId: string, isChecked: boolean) => {
+      const params = new URLSearchParams(searchParams);
+      const ids = params.get('category')?.split(',') ?? [];
+
+      if (isChecked) {
+        ids.push(checkboxId);
+      } else {
+        ids.splice(ids.indexOf(checkboxId), 1);
+      }
+
+      if (ids.length === 0) {
+        params.delete('category');
+        router.push(`?${params.toString()}`);
+        return;
+      }
+
+      params.set('category', ids.join(','));
       router.push(`?${params.toString()}`);
     },
     [searchParams, router],
@@ -92,27 +123,42 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({ difficultyLevels }) => {
                   key={d.id}
                   value={d.id}
                   pressed={difficultyParams?.includes(d.id)}
-                  onPressedChange={(e) => handleCheckboxChange(d.id, e)}
+                  onPressedChange={(e) => handleDifficultyChange(d.id, e)}
                 >
                   {d.name}
                 </Toggle>
               ))}
             </ToggleGroup>
           </div>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-semibold">Kategória</p>
+            <ToggleGroup type="single" className="flex flex-wrap gap-2">
+              {deduplicatedCategories.map((d) => (
+                <Toggle
+                  key={d.id}
+                  value={d.id}
+                  pressed={categoryParams?.includes(d.id)}
+                  onPressedChange={(e) => handleCategoryToggle(d.id, e)}
+                >
+                  {d.name}
+                </Toggle>
+              ))}
+            </ToggleGroup>
+          </div>
+          <label
+            className="flex items-center gap-2 self-start"
+            htmlFor="isBought"
+          >
+            {/** biome-ignore lint/correctness/useUniqueElementIds: id is used for labelling */}
+            <Checkbox
+              checked={isBought}
+              onCheckedChange={handleDifficultyToggle}
+              aria-label="isBought"
+              id="isBought"
+            />
+            <span className="text-sm">Zobraziť aj už kúpené</span>
+          </label>
         </div>
-        <label
-          className="flex items-center gap-2 self-start"
-          htmlFor="isBought"
-        >
-          {/** biome-ignore lint/correctness/useUniqueElementIds: id is used for labelling */}
-          <Checkbox
-            checked={isBought}
-            onCheckedChange={handleToggle}
-            aria-label="isBought"
-            id="isBought"
-          />
-          <span className="text-sm">Zobraziť aj už kúpené</span>
-        </label>
       </div>
     </div>
   );
