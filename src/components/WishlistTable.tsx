@@ -1,28 +1,27 @@
 'use client';
-import React, { type FC, useCallback, useEffect, useState } from 'react';
 import {
   type ColumnDef,
   getCoreRowModel,
-  useReactTable,
-  type SortingState,
   getSortedRowModel,
+  type SortingState,
+  useReactTable,
 } from '@tanstack/react-table';
-import { DataTable } from './DataTable';
-import type { WishlistItem } from '@/types';
-import { Skeleton } from './ui/skeleton';
-import { Checkbox } from './ui/checkbox';
-import { ArrowRight, ArrowUpDown } from 'lucide-react';
-import WishlistModel from './WishlistModel';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useDebounce } from '@/hooks/useDebounce';
-import { Button } from './ui/button';
 import { useAtom } from 'jotai';
+import { ArrowRight, ArrowUpDown } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { type FC, useEffect, useState } from 'react';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
+import type { WishlistItem } from '@/types';
 import codeToSymbol from '@/utils/codeToSymbol';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { Badge } from './ui/badge';
 import pickVariantFromUuid from '@/utils/pickVarianFromUuid';
+import { DataTable } from './DataTable';
 import FiltersDesktop from './FiltersDesktop';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
+import { Skeleton } from './ui/skeleton';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import WishlistModel from './WishlistModel';
 
 const columns: ColumnDef<WishlistItem>[] = [
   {
@@ -190,12 +189,8 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const isBought = searchParams.get('bought') === 'true';
-  const initialFilter = searchParams.get('filter') ?? '';
   const initialSort = searchParams.get('sort')?.split('.');
 
-  const [filter, setFilter] = useState(initialFilter);
-  const debouncedFilter = useDebounce(filter);
   const [sorting, setSorting] = useState<SortingState>(
     initialSort
       ? [{ id: initialSort[0], desc: initialSort[1] === 'desc' }]
@@ -242,42 +237,12 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     table.setRowSelection(selection);
   }, [mappedData, table]);
 
-  const handleToggle = useCallback(() => {
-    const params = new URLSearchParams(searchParams);
-    const nextValue = (!isBought).toString();
-
-    if (nextValue === 'false') {
-      params.delete('bought'); // optional: remove when false
-    } else {
-      params.set('bought', nextValue);
-    }
-
-    router.push(`?${params.toString()}`);
-  }, [isBought, router, searchParams]);
-
   const handleCheckLogin = async () => {
     const res = await fetch('/api/check-cookie');
     if (res.status === 200) {
       setIsLoggedIn(true);
     }
   };
-
-  const handleLogout = async () => {
-    const res = await fetch('/api/logout');
-    if (res.status === 200) {
-      setIsLoggedIn(false);
-    }
-  };
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (debouncedFilter) {
-      params.set('filter', debouncedFilter);
-    } else {
-      params.delete('filter');
-    }
-    router.push(`?${params.toString()}`);
-  }, [debouncedFilter, router, searchParams]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -306,21 +271,7 @@ const WishlistTable: FC<WishlistTableProps> = ({ data }) => {
     );
   }
 
-  return (
-    <>
-      <FiltersDesktop
-        difficultyLevels={mappedData
-          .map((d) => d.difficultyLevel)
-          .filter((d) => d !== null)}
-        isBought={isBought}
-        filter={filter}
-        setFilter={setFilter}
-        handleToggle={handleToggle}
-        handleLogout={handleLogout}
-      />
-      <DataTable columns={filteredColumns} table={table} />
-    </>
-  );
+  return <DataTable columns={filteredColumns} table={table} />;
 };
 
 export default WishlistTable;

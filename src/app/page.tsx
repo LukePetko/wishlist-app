@@ -5,6 +5,8 @@ import convertToEur from '@/utils/convertToEur';
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
 import LoginButton from '@/components/LoginButton';
+import FiltersDesktop from '@/components/FiltersDesktop';
+import { difficultyLevels as difficultyLevelsTable } from '@/drizzle/schema';
 
 const Wishlist = async ({
   searchParams,
@@ -95,6 +97,11 @@ const Wishlist = async ({
     }),
   );
 
+  const difficultyLevels = await db
+    .select()
+    .from(difficultyLevelsTable)
+    .execute();
+
   if (sort && sort[0] === 'lowestPrice') {
     processedData.sort((a, b) => {
       if (sort[1] === 'asc') {
@@ -116,6 +123,7 @@ const Wishlist = async ({
         </div>
         <LoginButton />
       </div>
+      <FiltersDesktop difficultyLevels={difficultyLevels} />
       <WishlistTable data={processedData} />
     </div>
   );
