@@ -1,9 +1,16 @@
 'use client';
+import { Settings2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type FC, useCallback, useEffect, useState } from 'react';
 import type { categories, difficultyLevels } from '@/drizzle/schema';
 import { useDebounce } from '@/hooks/useDebounce';
+import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './ui/collapsible';
 import { Input } from './ui/input';
 import { Toggle } from './ui/toggle';
 import { ToggleGroup } from './ui/toggle-group';
@@ -104,63 +111,76 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
   }, [debouncedFilter, router, searchParams]);
 
   return (
-    <div className="flex justify-between border-gray-200 border py-3 pl-3 pr-4 rounded-md shadow-lg">
-      <div className="flex items-center justify-between w-full">
-        <div className="flex flex-col gap-2">
-          <Input
-            type="text"
-            className="max-w-64"
-            placeholder="Hľadať..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            autoComplete="wishlist-filter"
-          />
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold">Náročnosť</p>
-            <ToggleGroup type="single" className="flex flex-wrap gap-2">
-              {deduplicatedDifficultyLevels.map((d) => (
-                <Toggle
-                  key={d.id}
-                  value={d.id}
-                  pressed={difficultyParams?.includes(d.id)}
-                  onPressedChange={(e) => handleDifficultyChange(d.id, e)}
-                >
-                  {d.name}
-                </Toggle>
-              ))}
-            </ToggleGroup>
+    <Collapsible
+      title="Filter"
+      className="w-full flex flex-col gap-2 items-end"
+    >
+      <CollapsibleTrigger>
+        <Button variant="outline" className="flex items-center gap-2">
+          <Settings2 className="h-4 w-4" />
+          <span className="text-sm">Filter</span>
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent asChild>
+        <div className="flex justify-between border-gray-200 border py-3 pl-3 pr-4 rounded-md shadow-lg w-full">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex flex-col gap-2">
+              <Input
+                type="text"
+                className="max-w-64"
+                placeholder="Hľadať..."
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                autoComplete="wishlist-filter"
+              />
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold">Náročnosť</p>
+                <ToggleGroup type="single" className="flex flex-wrap gap-2">
+                  {deduplicatedDifficultyLevels.map((d) => (
+                    <Toggle
+                      key={d.id}
+                      value={d.id}
+                      pressed={difficultyParams?.includes(d.id)}
+                      onPressedChange={(e) => handleDifficultyChange(d.id, e)}
+                    >
+                      {d.name}
+                    </Toggle>
+                  ))}
+                </ToggleGroup>
+              </div>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold">Kategória</p>
+                <ToggleGroup type="single" className="flex flex-wrap gap-2">
+                  {deduplicatedCategories.map((d) => (
+                    <Toggle
+                      key={d.id}
+                      value={d.id}
+                      pressed={categoryParams?.includes(d.id)}
+                      onPressedChange={(e) => handleCategoryToggle(d.id, e)}
+                    >
+                      {d.name}
+                    </Toggle>
+                  ))}
+                </ToggleGroup>
+              </div>
+              <label
+                className="flex items-center gap-2 self-start"
+                htmlFor="isBought"
+              >
+                {/** biome-ignore lint/correctness/useUniqueElementIds: id is used for labelling */}
+                <Checkbox
+                  checked={isBought}
+                  onCheckedChange={handleDifficultyToggle}
+                  aria-label="isBought"
+                  id="isBought"
+                />
+                <span className="text-sm">Zobraziť aj už kúpené</span>
+              </label>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-semibold">Kategória</p>
-            <ToggleGroup type="single" className="flex flex-wrap gap-2">
-              {deduplicatedCategories.map((d) => (
-                <Toggle
-                  key={d.id}
-                  value={d.id}
-                  pressed={categoryParams?.includes(d.id)}
-                  onPressedChange={(e) => handleCategoryToggle(d.id, e)}
-                >
-                  {d.name}
-                </Toggle>
-              ))}
-            </ToggleGroup>
-          </div>
-          <label
-            className="flex items-center gap-2 self-start"
-            htmlFor="isBought"
-          >
-            {/** biome-ignore lint/correctness/useUniqueElementIds: id is used for labelling */}
-            <Checkbox
-              checked={isBought}
-              onCheckedChange={handleDifficultyToggle}
-              aria-label="isBought"
-              id="isBought"
-            />
-            <span className="text-sm">Zobraziť aj už kúpené</span>
-          </label>
         </div>
-      </div>
-    </div>
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

@@ -1,18 +1,17 @@
-import { db } from '@/drizzle';
-import React from 'react';
+import { eq, exists, inArray, or } from 'drizzle-orm';
+import FiltersDesktop from '@/components/FiltersDesktop';
+import LoginButton from '@/components/LoginButton';
 import WishlistTable from '@/components/WishlistTable';
-import convertToEur from '@/utils/convertToEur';
+import { db } from '@/drizzle';
+import {
+  categories as categoriesTable,
+  difficultyLevels as difficultyLevelsTable,
+  wishlistItems,
+  wishlistItemsCategories,
+} from '@/drizzle/schema';
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
-import LoginButton from '@/components/LoginButton';
-import FiltersDesktop from '@/components/FiltersDesktop';
-import {
-  difficultyLevels as difficultyLevelsTable,
-  categories as categoriesTable,
-  wishlistItemsCategories,
-  wishlistItems,
-} from '@/drizzle/schema';
-import { eq, exists, inArray, or } from 'drizzle-orm';
+import convertToEur from '@/utils/convertToEur';
 
 const Wishlist = async ({
   searchParams,
@@ -168,8 +167,8 @@ const Wishlist = async ({
   }
 
   return (
-    <div className="py-12 max-w-7xl mx-auto flex flex-col gap-6 px-4">
-      <div className="flex w-full justify-between gap-2">
+    <div className="py-12 max-w-7xl mx-auto flex flex-col gap-2 px-4">
+      <div className="flex w-full justify-between gap-2 mb-4">
         <div className="flex items-baseline gap-2">
           <h1 className="text-3xl font-bold">Wishlist</h1>
           <p className="text-sm text-gray-500">
