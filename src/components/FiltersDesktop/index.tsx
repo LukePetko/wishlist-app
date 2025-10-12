@@ -1,6 +1,6 @@
 'use client';
 import { PopoverTrigger } from '@radix-ui/react-popover';
-import { Settings2 } from 'lucide-react';
+import { CircleCheck, Settings2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type FC, useCallback, useEffect, useState } from 'react';
 import type { categories, difficultyLevels } from '@/drizzle/schema';
@@ -9,8 +9,6 @@ import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
 import { Input } from '../ui/input';
 import { Popover, PopoverContent } from '../ui/popover';
-import { Toggle } from '../ui/toggle';
-import { ToggleGroup } from '../ui/toggle-group';
 import DifficultyTooltip from './DifficultyTooltip';
 
 type FiltersDesktopProps = {
@@ -53,9 +51,11 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
   }, [isBought, router, searchParams]);
 
   const handleDifficultyChange = useCallback(
-    (checkboxId: string, isChecked: boolean) => {
+    (checkboxId: string) => {
       const params = new URLSearchParams(searchParams);
       const ids = params.get('difficulty')?.split(',') ?? [];
+
+      const isChecked = !ids.includes(checkboxId);
 
       if (isChecked) {
         ids.push(checkboxId);
@@ -76,9 +76,11 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
   );
 
   const handleCategoryToggle = useCallback(
-    (checkboxId: string, isChecked: boolean) => {
+    (checkboxId: string) => {
       const params = new URLSearchParams(searchParams);
       const ids = params.get('category')?.split(',') ?? [];
+
+      const isChecked = !ids.includes(checkboxId);
 
       if (isChecked) {
         ids.push(checkboxId);
@@ -109,7 +111,7 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
   }, [debouncedFilter, router, searchParams]);
 
   return (
-    <div className="w-full flex flex-col gap-2 items-end">
+    <div className="w-full flex items-start">
       <Popover>
         <PopoverTrigger asChild>
           <Button variant="outline" className="flex items-center gap-2">
@@ -117,7 +119,7 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
             <span className="text-sm">Filter</span>
           </Button>
         </PopoverTrigger>
-        <PopoverContent align="end" className="w-96">
+        <PopoverContent align="start" className="w-96">
           <div className="flex flex-col justify-between w-full gap-4">
             <div className="flex flex-col gap-1">
               <label htmlFor="filter" className="text-sm font-semibold">
@@ -139,33 +141,43 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
                 <p className="text-sm font-semibold">Náročnosť</p>
                 <DifficultyTooltip />
               </div>
-              <ToggleGroup type="single" className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {deduplicatedDifficultyLevels.map((d) => (
-                  <Toggle
+                  <Button
                     key={d.id}
-                    value={d.id}
-                    pressed={difficultyParams?.includes(d.id)}
-                    onPressedChange={(e) => handleDifficultyChange(d.id, e)}
+                    className="rounded-full"
+                    onClick={() => handleDifficultyChange(d.id)}
+                    variant={
+                      difficultyParams?.includes(d.id) ? 'default' : 'outline'
+                    }
                   >
+                    {difficultyParams?.includes(d.id) ? (
+                      <CircleCheck className="h-4 w-4" />
+                    ) : null}
                     {d.name}
-                  </Toggle>
+                  </Button>
                 ))}
-              </ToggleGroup>
+              </div>
             </div>
             <div className="flex flex-col gap-1">
               <p className="text-sm font-semibold">Kategória</p>
-              <ToggleGroup type="single" className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2">
                 {deduplicatedCategories.map((d) => (
-                  <Toggle
+                  <Button
                     key={d.id}
-                    value={d.id}
-                    pressed={categoryParams?.includes(d.id)}
-                    onPressedChange={(e) => handleCategoryToggle(d.id, e)}
+                    className="rounded-full"
+                    onClick={() => handleCategoryToggle(d.id)}
+                    variant={
+                      categoryParams?.includes(d.id) ? 'default' : 'outline'
+                    }
                   >
+                    {categoryParams?.includes(d.id) ? (
+                      <CircleCheck className="h-4 w-4" />
+                    ) : null}
                     {d.name}
-                  </Toggle>
+                  </Button>
                 ))}
-              </ToggleGroup>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               {/** biome-ignore lint/correctness/useUniqueElementIds: id is used for labelling */}
