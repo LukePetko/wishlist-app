@@ -1,5 +1,5 @@
 'use client';
-import { Settings2 } from 'lucide-react';
+import { CircleQuestionMark, Settings2 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type FC, useCallback, useEffect, useState } from 'react';
 import type { categories, difficultyLevels } from '@/drizzle/schema';
@@ -14,6 +14,7 @@ import {
 import { Input } from './ui/input';
 import { Toggle } from './ui/toggle';
 import { ToggleGroup } from './ui/toggle-group';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 type FiltersDesktopProps = {
   difficultyLevels: (typeof difficultyLevels.$inferSelect)[];
@@ -134,7 +135,43 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
                 autoComplete="wishlist-filter"
               />
               <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold">Náročnosť</p>
+                <div className="flex items-center gap-1">
+                  <p className="text-sm font-semibold">Náročnosť</p>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <CircleQuestionMark className="h-3 w-3 text-gray-500" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-sm">
+                        Pri výbere náročnosti zohľadňujem nasledujúce faktory:
+                      </p>
+                      <ul className="list-disc pl-4 text-sm">
+                        <li>
+                          <span className="font-bold">Ľahká</span>: Linky na
+                          overené slovenské obchody, dá sa len jednoducho
+                          objednať
+                        </li>
+                        <li>
+                          <span className="font-bold">Stredná</span>: Linky na
+                          zahraničné obchody v rámci európy, relatívne ľahko sa
+                          dajú objednať
+                        </li>
+                        <li>
+                          <span className="font-bold">Ťažká</span>:
+                          Ázijské/Americké/Austrálske obchody. Môžu obsahovať
+                          clo, dane, drahé poštovné, atď. Treba si dávať pozor
+                          na podmienky
+                        </li>
+                        <li>
+                          <span className="font-bold">Extra ťažká</span>: Z
+                          ďaleka najťažsia kategória. Zberateľské predmety,
+                          často nedostupné/bez linku. Nedajú sa len tak
+                          objednať.
+                        </li>
+                      </ul>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
                 <ToggleGroup type="single" className="flex flex-wrap gap-2">
                   {deduplicatedDifficultyLevels.map((d) => (
                     <Toggle
