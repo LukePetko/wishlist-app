@@ -13,15 +13,12 @@ import DifficultyTooltip from './DifficultyTooltip';
 import { useMd } from '@/hooks/useMd';
 import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 
-type FiltersDesktopProps = {
+type FiltersProps = {
   difficultyLevels: (typeof difficultyLevels.$inferSelect)[];
   categories: (typeof categories.$inferSelect)[];
 };
 
-const FiltersDesktop: FC<FiltersDesktopProps> = ({
-  difficultyLevels,
-  categories,
-}) => {
+const Filters: FC<FiltersProps> = ({ difficultyLevels, categories }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const params = new URLSearchParams(searchParams);
@@ -218,4 +215,4 @@ const FiltersDesktop: FC<FiltersDesktopProps> = ({
   );
 };
 
-export default FiltersDesktop;
+export default Filters;
