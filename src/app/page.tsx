@@ -1,5 +1,5 @@
 import { eq, exists, inArray, or } from 'drizzle-orm';
-import FiltersDesktop from '@/components/FiltersDesktop';
+import Filters from '@/components/Filters';
 import LoginButton from '@/components/LoginButton';
 import WishlistTable from '@/components/WishlistTable';
 import { db } from '@/drizzle';
@@ -175,10 +175,7 @@ const Wishlist = async ({
         </p>
       </div>
       <div className="flex w-full justify-between gap-2">
-        <FiltersDesktop
-          difficultyLevels={difficultyLevels}
-          categories={categories}
-        />
+        <Filters difficultyLevels={difficultyLevels} categories={categories} />
         <LoginButton />
       </div>
       <WishlistTable data={processedData} />
