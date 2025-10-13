@@ -1,5 +1,5 @@
 import { eq, exists, inArray, or } from 'drizzle-orm';
-import FiltersDesktop from '@/components/FiltersDesktop';
+import Filters from '@/components/Filters';
 import LoginButton from '@/components/LoginButton';
 import WishlistTable from '@/components/WishlistTable';
 import { db } from '@/drizzle';
@@ -168,19 +168,16 @@ const Wishlist = async ({
 
   return (
     <div className="py-12 max-w-7xl mx-auto flex flex-col gap-2 px-4">
-      <div className="flex w-full justify-between gap-2 mb-4">
-        <div className="flex items-baseline gap-2">
-          <h1 className="text-3xl font-bold">Wishlist</h1>
-          <p className="text-sm text-gray-500">
-            Vitaj na mojom zozname želaní 🥰
-          </p>
-        </div>
+      <div className="flex items-baseline gap-2 mb-4">
+        <h1 className="text-3xl font-bold">Wishlist</h1>
+        <p className="text-sm text-gray-500">
+          Vitaj na mojom zozname želaní 🥰
+        </p>
+      </div>
+      <div className="flex w-full justify-between gap-2">
+        <Filters difficultyLevels={difficultyLevels} categories={categories} />
         <LoginButton />
       </div>
-      <FiltersDesktop
-        difficultyLevels={difficultyLevels}
-        categories={categories}
-      />
       <WishlistTable data={processedData} />
     </div>
   );
