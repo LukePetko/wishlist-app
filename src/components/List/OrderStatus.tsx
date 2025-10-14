@@ -49,6 +49,10 @@ const OrderStatus: FC<OrderStatusProps> = ({ item }) => {
     return null;
   }
 
+  if (item.isBought) {
+    return <p className="text-sm text-gray-500">Kúpené</p>;
+  }
+
   if (!item.isOrdered) {
     return (
       <OrderConfirmationModal item={item}>
