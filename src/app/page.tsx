@@ -12,6 +12,7 @@ import {
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
 import convertToEur from '@/utils/convertToEur';
+import List from '@/components/List';
 
 const Wishlist = async ({
   searchParams,
@@ -178,6 +179,7 @@ const Wishlist = async ({
         <Filters difficultyLevels={difficultyLevels} categories={categories} />
         <LoginButton />
       </div>
+      <List items={processedData} />
       <WishlistTable data={processedData} />
     </div>
   );
