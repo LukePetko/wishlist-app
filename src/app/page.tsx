@@ -180,7 +180,6 @@ const Wishlist = async ({
         <LoginButton />
       </div>
       <List items={processedData} />
-      <WishlistTable data={processedData} />
     </div>
   );
 };

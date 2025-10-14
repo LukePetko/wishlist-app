@@ -7,6 +7,7 @@ import { Separator } from '../ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import DisplayPrice from './DisplayPrice';
 import StoresPopover from './StoresPopover';
+import OrderStatus from './OrderStatus';
 
 type ListItemProps = {
   item: WishlistItem;
@@ -26,7 +27,7 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
                 alt={item.name}
                 height={120}
                 width={120}
-                className="rounded-md h-[120px] object-contain"
+                className="h-[120px] object-contain"
               />
             </div>
           )}
@@ -63,9 +64,12 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
             )}
           </div>
         </div>
-        <div className="flex flex-col gap-2 items-end flex-1">
-          <DisplayPrice link={item.lowestPrice} />
-          {item.links.length > 1 && <StoresPopover links={item.links} />}
+        <div className="flex flex-col items-end flex-1 justify-between">
+          <div className="flex flex-col gap-2">
+            <DisplayPrice link={item.lowestPrice} />
+            {item.links.length > 1 && <StoresPopover links={item.links} />}
+          </div>
+          <OrderStatus item={item} />
         </div>
       </div>
       {showSeparator && <Separator />}
