@@ -6,8 +6,8 @@ import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import DisplayPrice from './DisplayPrice';
-import StoresPopover from './StoresPopover';
 import OrderStatus from './OrderStatus';
+import StoresPopover from './StoresPopover';
 
 type ListItemProps = {
   item: WishlistItem;

@@ -1,11 +1,11 @@
 import { useAtomValue } from 'jotai';
 import type { FC } from 'react';
-import type { wishlistOrders } from '@/drizzle/schema';
 import isLoggedInAtom from '@/jotai/loggenInAtom';
-import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
-import { Button } from '../ui/button';
+import { cn } from '@/lib/utils';
+import type { WishlistItem } from '@/types';
 import OrderConfirmationModal from '../OrderConfirmationModal';
-import { WishlistItem } from '@/types';
+import ResponsiveTooltip from '../ResponsiveTooltip';
+import { Button } from '../ui/button';
 
 type OrderNoteProps = {
   note: string | null;
@@ -13,6 +13,7 @@ type OrderNoteProps = {
 
 type OrderStatusProps = {
   item: WishlistItem;
+  className?: string;
 };
 
 const OrderNote: FC<OrderNoteProps> = ({ note }) => {
@@ -29,20 +30,19 @@ const OrderNote: FC<OrderNoteProps> = ({ note }) => {
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger>
+    <ResponsiveTooltip
+      content={<p className="text-xs">{note}</p>}
+      trigger={
         <p className="text-xs">
           <span className="text-gray-500">{note.slice(0, 40)}...</span>
         </p>
-      </TooltipTrigger>
-      <TooltipContent className="max-w-[20vw]">
-        <p className="text-xs">{note}</p>
-      </TooltipContent>
-    </Tooltip>
+      }
+      mobileContentClassName="border-none bg-black text-white p-2 text-sm"
+    />
   );
 };
 
-const OrderStatus: FC<OrderStatusProps> = ({ item }) => {
+const OrderStatus: FC<OrderStatusProps> = ({ item, className }) => {
   const isLoggedIn = useAtomValue(isLoggedInAtom);
 
   if (!isLoggedIn) {
@@ -55,14 +55,16 @@ const OrderStatus: FC<OrderStatusProps> = ({ item }) => {
 
   if (!item.isOrdered) {
     return (
-      <OrderConfirmationModal item={item}>
-        <Button className="text-xs">Nastaviť ako objendané</Button>
-      </OrderConfirmationModal>
+      <div className={className}>
+        <OrderConfirmationModal item={item}>
+          <Button className="text-xs">Nastaviť ako objendané</Button>
+        </OrderConfirmationModal>
+      </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-2 items-end">
+    <div className={cn('flex flex-col gap-2 items-end', className)}>
       <p className="text-sm text-gray-500">Objednané</p>
       <OrderNote note={item.orders[0].note} />
     </div>
