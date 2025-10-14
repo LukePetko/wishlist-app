@@ -1,9 +1,18 @@
-import { db } from '@/drizzle';
-import React from 'react';
+import { eq, exists, inArray, or } from 'drizzle-orm';
+import Filters from '@/components/Filters';
+import LoginButton from '@/components/LoginButton';
 import WishlistTable from '@/components/WishlistTable';
-import convertToEur from '@/utils/convertToEur';
+import { db } from '@/drizzle';
+import {
+  categories as categoriesTable,
+  difficultyLevels as difficultyLevelsTable,
+  wishlistItems,
+  wishlistItemsCategories,
+} from '@/drizzle/schema';
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
+import convertToEur from '@/utils/convertToEur';
+import List from '@/components/List';
 
 const Wishlist = async ({
   searchParams,
@@ -14,6 +23,12 @@ const Wishlist = async ({
   const isBought = awaitedSearchParams.bought === 'true';
   const filter = awaitedSearchParams.filter as string | undefined;
   const sort = (awaitedSearchParams.sort as string | undefined)?.split('.');
+  const difficulty = (
+    awaitedSearchParams.difficulty as string | undefined
+  )?.split(',');
+  const category = (awaitedSearchParams.category as string | undefined)?.split(
+    ',',
+  );
 
   const data = await db.query.wishlistItems.findMany({
     where: (wishlist, { eq, and, ilike }) => {
@@ -21,6 +36,28 @@ const Wishlist = async ({
 
       if (filter) {
         conditions.push(ilike(wishlist.name, `%${filter}%`));
+      }
+
+      if (difficulty) {
+        conditions.push(
+          or(...difficulty.map((d) => eq(wishlist.difficultyLevel, d))),
+        );
+      }
+
+      if (category) {
+        conditions.push(
+          exists(
+            db
+              .select()
+              .from(wishlistItemsCategories)
+              .where(
+                and(
+                  eq(wishlistItemsCategories.itemId, wishlist.id),
+                  inArray(wishlistItemsCategories.categoryId, category),
+                ),
+              ),
+          ),
+        );
       }
 
       return and(...conditions.filter((c) => c !== undefined));
@@ -94,6 +131,32 @@ const Wishlist = async ({
     }),
   );
 
+  const difficultyLevels = await db
+    .select()
+    .from(difficultyLevelsTable)
+    .where(
+      exists(
+        db
+          .select()
+          .from(wishlistItems)
+          .where(eq(wishlistItems.difficultyLevel, difficultyLevelsTable.id)),
+      ),
+    )
+    .execute();
+
+  const categories = await db
+    .select()
+    .from(categoriesTable)
+    .where(
+      exists(
+        db
+          .select()
+          .from(wishlistItemsCategories)
+          .where(eq(wishlistItemsCategories.categoryId, categoriesTable.id)),
+      ),
+    )
+    .execute();
+
   if (sort && sort[0] === 'lowestPrice') {
     processedData.sort((a, b) => {
       if (sort[1] === 'asc') {
@@ -105,9 +168,18 @@ const Wishlist = async ({
   }
 
   return (
-    <div className="py-12 max-w-7xl mx-auto flex flex-col gap-6 px-4">
-      <h1 className="text-3xl font-bold">Wishlist</h1>
-      <WishlistTable data={processedData} />
+    <div className="py-12 max-w-7xl mx-auto flex flex-col gap-2 px-4">
+      <div className="flex items-baseline gap-2 mb-4">
+        <h1 className="text-3xl font-bold">Wishlist</h1>
+        <p className="text-sm text-gray-500">
+          Vitaj na mojom zozname želaní 🥰
+        </p>
+      </div>
+      <div className="flex w-full justify-between gap-2">
+        <Filters difficultyLevels={difficultyLevels} categories={categories} />
+        <LoginButton />
+      </div>
+      <List items={processedData} />
     </div>
   );
 };
