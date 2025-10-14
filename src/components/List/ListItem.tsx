@@ -17,9 +17,9 @@ type ListItemProps = {
 
 const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
   return (
-    <div className="flex flex-col gap-2 p-4">
+    <div className="flex flex-col gap-4 p-4">
       <div className="flex flex-row gap-2 justify-between">
-        <div className={cn('flex gap-4 px-2', className)}>
+        <div className={cn('flex gap-8 px-2', className)}>
           {item.image && (
             <div className="min-w-[120px] flex items-center justify-center">
               <Image
@@ -31,11 +31,29 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
               />
             </div>
           )}
-          <div className="flex flex-col gap-2 p-4 w-2/3">
+          <div className="flex flex-col gap-2 w-2/3">
             <div className="flex flex-row gap-2">
-              <h3 className="text-xl font-semibold md:whitespace-nowrap">
-                {item.name}
-              </h3>
+              {item.isBought ? (
+                <h3 className="text-xl font-semibold md:whitespace-nowrap line-through hover:no-underline">
+                  {item.name}
+                </h3>
+              ) : (
+                <h3 className="text-xl font-semibold md:whitespace-nowrap">
+                  {item.name}
+                </h3>
+              )}
+              {item.isBought && (
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Badge className="!p-1 text-xs" variant="destructive">
+                      Kúpené
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent className="flex flex-col gap-1">
+                    Tento darček už bol kúpený a už som ho aj dostal :)
+                  </TooltipContent>
+                </Tooltip>
+              )}
               {item.difficultyLevel && (
                 <Tooltip>
                   <TooltipTrigger>
@@ -51,7 +69,7 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
             </div>
             <p className="text-sm text-gray-500">{item.description}</p>
             {item.categories.length > 0 && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1">
                 <p className="text-sm text-gray-500">Kategórie</p>
                 <div className="flex gap-2">
                   {item.categories.map((category) => (
