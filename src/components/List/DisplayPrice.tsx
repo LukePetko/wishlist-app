@@ -5,14 +5,21 @@ import type react from 'react';
 import type { WishlistLink } from '@/types';
 import codeToSymbol from '@/utils/codeToSymbol';
 import ConditionalTooltip from '../ConditionalTooltip';
+import { cn } from '@/lib/utils';
 
 type DisplayPriceProps = {
   link: WishlistLink;
+  className?: string;
+  displayConverted?: boolean;
 };
 
-const DisplayPrice: react.FC<DisplayPriceProps> = ({ link }) => {
+const DisplayPrice: react.FC<DisplayPriceProps> = ({
+  link,
+  className,
+  displayConverted,
+}) => {
   return (
-    <div className="flex flex-col gap-2 items-end">
+    <div className={cn('flex flex-col gap-2 items-end', className)}>
       <p className="text-sm text-gray-500">Cena</p>
       <Link
         href={link.url}
@@ -28,6 +35,9 @@ const DisplayPrice: react.FC<DisplayPriceProps> = ({ link }) => {
             {codeToSymbol(link.currency)}
           </p>
         </ConditionalTooltip>
+        {displayConverted && link.currency !== 'EUR' && (
+          <p className="text-sm text-gray-500">(~{link.priceEur}€)</p>
+        )}
         {link.store.icon ? (
           <Image
             src={`/api/get-image?id=${link.store.icon}`}
