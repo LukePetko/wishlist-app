@@ -1,17 +1,27 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: intentonal */
+/** biome-ignore-all lint/correctness/useUniqueElementIds: used for labelling */
 'use client';
 import { PopoverTrigger } from '@radix-ui/react-popover';
 import { CircleCheck, Settings2 } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { type FC, useCallback, useEffect, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {
+  type FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { categories, difficultyLevels } from '@/drizzle/schema';
 import { useDebounce } from '@/hooks/useDebounce';
+import { useMd } from '@/hooks/useMd';
 import { Button } from '../ui/button';
 import { Checkbox } from '../ui/checkbox';
+import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 import { Input } from '../ui/input';
 import { Popover, PopoverContent } from '../ui/popover';
 import DifficultyTooltip from './DifficultyTooltip';
-import { useMd } from '@/hooks/useMd';
-import { Drawer, DrawerContent, DrawerTrigger } from '../ui/drawer';
 
 type FiltersProps = {
   difficultyLevels: (typeof difficultyLevels.$inferSelect)[];
@@ -21,94 +31,93 @@ type FiltersProps = {
 const Filters: FC<FiltersProps> = ({ difficultyLevels, categories }) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const params = new URLSearchParams(searchParams);
-  const difficultyParams = params.get('difficulty');
-  const categoryParams = params.get('category');
-  const isBought = searchParams.get('bought') === 'true';
-  const initialFilter = searchParams.get('filter') ?? '';
-  const [filter, setFilter] = useState(initialFilter);
-  const debouncedFilter = useDebounce(filter);
+  const pathname = usePathname();
   const isMd = useMd();
 
-  const deduplicatedDifficultyLevels = Array.from(
-    new Map(difficultyLevels.map((item) => [item.id, item])).values(),
-  );
-  const deduplicatedCategories = Array.from(
-    new Map(categories.map((item) => [item.id, item])).values(),
-  );
+  const difficultyParams = searchParams.get('difficulty');
+  const categoryParams = searchParams.get('category');
+  const isBought = searchParams.get('bought') === 'true';
 
-  const handleDifficultyToggle = useCallback(() => {
-    const params = new URLSearchParams(searchParams);
-    const nextValue = (!isBought).toString();
+  const [filter, setFilter] = useState(searchParams.get('filter') ?? '');
+  const debouncedFilter = useDebounce(filter);
 
-    if (nextValue === 'false') {
-      params.delete('bought'); // optional: remove when false
-    } else {
-      params.set('bought', nextValue);
+  const skipNextDebouncedWriteRef = useRef(false);
+
+  useEffect(() => {
+    const next = searchParams.get('filter') ?? '';
+    if (next !== filter) {
+      skipNextDebouncedWriteRef.current = true;
+      setFilter(next);
     }
+  }, [searchParams]);
 
-    router.push(`?${params.toString()}`);
-  }, [isBought, router, searchParams]);
+  const deduplicatedDifficultyLevels = useMemo(
+    () => Array.from(new Map(difficultyLevels.map((i) => [i.id, i])).values()),
+    [difficultyLevels],
+  );
+  const deduplicatedCategories = useMemo(
+    () => Array.from(new Map(categories.map((i) => [i.id, i])).values()),
+    [categories],
+  );
+
+  const pushParams = useCallback(
+    (mutate: (p: URLSearchParams) => void) => {
+      const params = new URLSearchParams(searchParams);
+      mutate(params);
+      const qs = params.toString();
+      router.push(qs ? `${pathname}?${qs}` : pathname);
+    },
+    [router, searchParams, pathname],
+  );
+
+  const handleBoughtToggle = useCallback(() => {
+    pushParams((p) => {
+      const next = (!isBought).toString();
+      if (next === 'false') p.delete('bought');
+      else p.set('bought', next);
+    });
+  }, [isBought, pushParams]);
 
   const handleDifficultyChange = useCallback(
     (checkboxId: string) => {
-      const params = new URLSearchParams(searchParams);
-      const ids = params.get('difficulty')?.split(',') ?? [];
-
-      const isChecked = !ids.includes(checkboxId);
-
-      if (isChecked) {
-        ids.push(checkboxId);
-      } else {
-        ids.splice(ids.indexOf(checkboxId), 1);
-      }
-
-      if (ids.length === 0) {
-        params.delete('difficulty');
-        router.push(`?${params.toString()}`);
-        return;
-      }
-
-      params.set('difficulty', ids.join(','));
-      router.push(`?${params.toString()}`);
+      pushParams((p) => {
+        const ids = p.get('difficulty')?.split(',').filter(Boolean) ?? [];
+        const idx = ids.indexOf(checkboxId);
+        if (idx === -1) ids.push(checkboxId);
+        else ids.splice(idx, 1);
+        ids.length
+          ? p.set('difficulty', ids.join(','))
+          : p.delete('difficulty');
+      });
     },
-    [searchParams, router],
+    [pushParams],
   );
 
   const handleCategoryToggle = useCallback(
     (checkboxId: string) => {
-      const params = new URLSearchParams(searchParams);
-      const ids = params.get('category')?.split(',') ?? [];
-
-      const isChecked = !ids.includes(checkboxId);
-
-      if (isChecked) {
-        ids.push(checkboxId);
-      } else {
-        ids.splice(ids.indexOf(checkboxId), 1);
-      }
-
-      if (ids.length === 0) {
-        params.delete('category');
-        router.push(`?${params.toString()}`);
-        return;
-      }
-
-      params.set('category', ids.join(','));
-      router.push(`?${params.toString()}`);
+      pushParams((p) => {
+        const ids = p.get('category')?.split(',').filter(Boolean) ?? [];
+        const idx = ids.indexOf(checkboxId);
+        if (idx === -1) ids.push(checkboxId);
+        else ids.splice(idx, 1);
+        ids.length ? p.set('category', ids.join(',')) : p.delete('category');
+      });
     },
-    [searchParams, router],
+    [pushParams],
   );
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    if (debouncedFilter) {
-      params.set('filter', debouncedFilter);
-    } else {
-      params.delete('filter');
+    if (skipNextDebouncedWriteRef.current) {
+      skipNextDebouncedWriteRef.current = false;
+      return;
     }
-    router.push(`?${params.toString()}`);
-  }, [debouncedFilter, router, searchParams]);
+    const urlValue = searchParams.get('filter') ?? '';
+    if (debouncedFilter === urlValue) return;
+    pushParams((p) => {
+      if (debouncedFilter) p.set('filter', debouncedFilter);
+      else p.delete('filter');
+    });
+  }, [debouncedFilter, pushParams, searchParams]);
 
   const renderTriggerButton = () => (
     <Button variant="outline" className="flex items-center gap-2">
@@ -123,61 +132,64 @@ const Filters: FC<FiltersProps> = ({ difficultyLevels, categories }) => {
         <label htmlFor="filter" className="text-sm font-semibold">
           Hľadať
         </label>
-        {/** biome-ignore lint/correctness/useUniqueElementIds: using id for labelling */}
         <Input
           id="filter"
           type="text"
           className="w-full"
-          placeholder="Hľadať..."
+          placeholder="Hľadať…"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           autoComplete="wishlist-filter"
         />
       </div>
+
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-1">
           <p className="text-sm font-semibold">Náročnosť</p>
           <DifficultyTooltip />
         </div>
         <div className="flex flex-wrap gap-2">
-          {deduplicatedDifficultyLevels.map((d) => (
-            <Button
-              key={d.id}
-              className="rounded-full"
-              onClick={() => handleDifficultyChange(d.id)}
-              variant={difficultyParams?.includes(d.id) ? 'default' : 'outline'}
-            >
-              {difficultyParams?.includes(d.id) ? (
-                <CircleCheck className="h-4 w-4" />
-              ) : null}
-              {d.name}
-            </Button>
-          ))}
+          {deduplicatedDifficultyLevels.map((d) => {
+            const active = difficultyParams?.split(',').includes(d.id);
+            return (
+              <Button
+                key={d.id}
+                className="rounded-full"
+                onClick={() => handleDifficultyChange(d.id)}
+                variant={active ? 'default' : 'outline'}
+              >
+                {active ? <CircleCheck className="h-4 w-4" /> : null}
+                {d.name}
+              </Button>
+            );
+          })}
         </div>
       </div>
+
       <div className="flex flex-col gap-1">
         <p className="text-sm font-semibold">Kategória</p>
         <div className="flex flex-wrap gap-2">
-          {deduplicatedCategories.map((d) => (
-            <Button
-              key={d.id}
-              className="rounded-full"
-              onClick={() => handleCategoryToggle(d.id)}
-              variant={categoryParams?.includes(d.id) ? 'default' : 'outline'}
-            >
-              {categoryParams?.includes(d.id) ? (
-                <CircleCheck className="h-4 w-4" />
-              ) : null}
-              {d.name}
-            </Button>
-          ))}
+          {deduplicatedCategories.map((d) => {
+            const active = categoryParams?.split(',').includes(d.id);
+            return (
+              <Button
+                key={d.id}
+                className="rounded-full"
+                onClick={() => handleCategoryToggle(d.id)}
+                variant={active ? 'default' : 'outline'}
+              >
+                {active ? <CircleCheck className="h-4 w-4" /> : null}
+                {d.name}
+              </Button>
+            );
+          })}
         </div>
       </div>
+
       <div className="flex items-center gap-2">
-        {/** biome-ignore lint/correctness/useUniqueElementIds: id is used for labelling */}
         <Checkbox
           checked={isBought}
-          onCheckedChange={handleDifficultyToggle}
+          onCheckedChange={handleBoughtToggle}
           aria-label="isBought"
           id="isBought"
         />
