@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
-import { minioClient } from '@/utils/file-management';
 import ENV from '@/lib/env';
+import { minioClient } from '@/utils/file-management';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const stream = await minioClient.getObject(ENV.S3_BUCKET_NAME!, id);
+    const stream = await minioClient.getObject(ENV.S3_BUCKET_NAME, id);
 
     if (!stream) {
       return new Response('File not found', { status: 404 });

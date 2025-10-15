@@ -1,6 +1,6 @@
-import ENV from '@/lib/env';
-import { cookies } from 'next/headers';
 import argon2 from 'argon2';
+import { cookies } from 'next/headers';
+import ENV from '@/lib/env';
 
 export async function POST(req: Request) {
   const body = await req.json();
