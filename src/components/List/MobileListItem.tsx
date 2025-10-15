@@ -7,6 +7,7 @@ import { Separator } from '../ui/separator';
 import DisplayPrice from './DisplayPrice';
 import OrderStatus from './OrderStatus';
 import StoresPopover from './StoresPopover';
+import ZoomImage from './ZoomImage';
 
 type MobileListItemProps = {
   item: WishlistItem;
@@ -17,7 +18,7 @@ const MobileListItem: FC<MobileListItemProps> = ({ item, showSeparator }) => {
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex flex-row gap-4 justify-between">
-        <Image
+        <ZoomImage
           src={`/api/get-image?id=${item.image}`}
           alt={item.name}
           height={120}
