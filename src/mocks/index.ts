@@ -1,5 +1,10 @@
 import { wishlistOrders } from '@/drizzle/schema';
 
+type MockItem = {
+  id: string;
+  orders: (typeof wishlistOrders.$inferSelect)[];
+};
+
 export const mockOrders = [
   {
     id: 'c34ac747-a18e-4d6f-87bc-2ed69c19f455',
@@ -57,4 +62,4 @@ export const mockOrders = [
     id: '92cbf2da-f0f7-4103-a583-9f550f1de7b9',
     orders: [],
   },
-] as (typeof wishlistOrders.$inferSelect)[];
+] as MockItem[];
