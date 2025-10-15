@@ -16,7 +16,9 @@ const index: FC<ListProps> = ({ items }) => {
   if (items.length === 0) {
     return (
       <div className="mt-8 flex flex-col items-center justify-center gap-2">
-        <p className="text-center">Nič takéto si asi neželám ¯\(ツ)/¯</p>
+        <p className="text-center">
+          Nič takéto si asi neželám (zatiaľ) ¯\(ツ)/¯
+        </p>
         <p className="text-center text-gray-500 text-sm">
           Skús hľadať niečo iné （＾ω＾）
         </p>

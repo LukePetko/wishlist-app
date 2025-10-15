@@ -48,7 +48,14 @@ const MobileListItem: FC<MobileListItemProps> = ({ item, showSeparator }) => {
             )}
             <Popover>
               <PopoverTrigger asChild>
-                <Badge className="!p-1">{item.difficultyLevel?.name}</Badge>
+                <Badge
+                  className="!p-1 text-xs text-white"
+                  style={{
+                    backgroundColor: item.difficultyLevel?.color || '#000',
+                  }}
+                >
+                  {item.difficultyLevel?.name}
+                </Badge>
               </PopoverTrigger>
               <PopoverContent className="border-none bg-black text-white p-2 w-max text-sm">
                 Náročnosť: {item.difficultyLevel?.name}

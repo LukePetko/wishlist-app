@@ -157,6 +157,9 @@ const Filters: FC<FiltersProps> = ({ difficultyLevels, categories }) => {
                 className="rounded-full"
                 onClick={() => handleDifficultyChange(d.id)}
                 variant={active ? 'default' : 'outline'}
+                style={{
+                  ...(active && { backgroundColor: d.color ?? '#000' }),
+                }}
               >
                 {active ? <CircleCheck className="h-4 w-4" /> : null}
                 {d.name}

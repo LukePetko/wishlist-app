@@ -9,6 +9,8 @@ import DisplayPrice from './DisplayPrice';
 import OrderStatus from './OrderStatus';
 import StoresPopover from './StoresPopover';
 import ZoomImage from './ZoomImage';
+import { difficultyLevels } from '@/drizzle/schema';
+import difficultyColors from '@/utils/difficultyColors';
 
 type ListItemProps = {
   item: WishlistItem;
@@ -58,7 +60,12 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
               {item.difficultyLevel && (
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge className="!p-1 text-xs">
+                    <Badge
+                      className="!p-1 text-xs text-white"
+                      style={{
+                        backgroundColor: item.difficultyLevel?.color || '#000',
+                      }}
+                    >
                       {item.difficultyLevel?.name}
                     </Badge>
                   </TooltipTrigger>

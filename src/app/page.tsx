@@ -134,14 +134,14 @@ const Wishlist = async ({
   const difficultyLevels = await db
     .select()
     .from(difficultyLevelsTable)
-    .where(
-      exists(
-        db
-          .select()
-          .from(wishlistItems)
-          .where(eq(wishlistItems.difficultyLevel, difficultyLevelsTable.id)),
-      ),
-    )
+    // .where(
+    //   exists(
+    //     db
+    //       .select()
+    //       .from(wishlistItems)
+    //       .where(eq(wishlistItems.difficultyLevel, difficultyLevelsTable.id)),
+    //   ),
+    // )
     .execute();
 
   const categories = await db
