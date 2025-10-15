@@ -12,6 +12,7 @@ import {
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
 import convertToEur from '@/utils/convertToEur';
+import ResetFilters from '@/components/ResetFilters';
 
 const Wishlist = async ({
   searchParams,
@@ -174,8 +175,14 @@ const Wishlist = async ({
           Vitaj na mojom zozname želaní 🥰
         </p>
       </div>
-      <div className="flex w-full justify-between gap-2">
-        <Filters difficultyLevels={difficultyLevels} categories={categories} />
+      <div className="flex w-full justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <Filters
+            difficultyLevels={difficultyLevels}
+            categories={categories}
+          />
+          <ResetFilters />
+        </div>
         <LoginButton />
       </div>
       <List items={processedData} />
