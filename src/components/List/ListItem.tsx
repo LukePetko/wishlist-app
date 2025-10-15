@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import DisplayPrice from './DisplayPrice';
 import OrderStatus from './OrderStatus';
 import StoresPopover from './StoresPopover';
+import ZoomImage from './ZoomImage';
 
 type ListItemProps = {
   item: WishlistItem;
@@ -22,11 +23,11 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
         <div className={cn('flex gap-8 px-2', className)}>
           {item.image && (
             <div className="min-w-[120px] flex items-center justify-center">
-              <Image
+              <ZoomImage
                 src={`/api/get-image?id=${item.image}`}
                 alt={item.name}
-                height={120}
                 width={120}
+                height={120}
                 className="h-[120px] object-contain"
               />
             </div>
