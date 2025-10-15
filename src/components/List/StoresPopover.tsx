@@ -1,11 +1,10 @@
-import { WishlistLink } from '@/types';
-import { FC } from 'react';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
-import { Button } from '../ui/button';
 import { ArrowRight, Store } from 'lucide-react';
-import codeToSymbol from '@/utils/codeToSymbol';
 import Image from 'next/image';
 import Link from 'next/link';
+import type { FC } from 'react';
+import type { WishlistLink } from '@/types';
+import codeToSymbol from '@/utils/codeToSymbol';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 
 type StoresPopoverProps = {
   links: WishlistLink[];

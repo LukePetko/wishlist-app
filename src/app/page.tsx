@@ -1,7 +1,7 @@
 import { eq, exists, inArray, or } from 'drizzle-orm';
 import Filters from '@/components/Filters';
+import List from '@/components/List';
 import LoginButton from '@/components/LoginButton';
-import WishlistTable from '@/components/WishlistTable';
 import { db } from '@/drizzle';
 import {
   categories as categoriesTable,
@@ -12,7 +12,6 @@ import {
 import ENV from '@/lib/env';
 import { mockOrders } from '@/mocks';
 import convertToEur from '@/utils/convertToEur';
-import List from '@/components/List';
 
 const Wishlist = async ({
   searchParams,

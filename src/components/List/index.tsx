@@ -10,6 +10,7 @@ type ListProps = {
 };
 
 const index: FC<ListProps> = ({ items }) => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const isMd = useMd();
 
   return (
