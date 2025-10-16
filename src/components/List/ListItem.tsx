@@ -10,7 +10,6 @@ import OrderStatus from './OrderStatus';
 import StoresPopover from './StoresPopover';
 import ZoomImage from './ZoomImage';
 import { difficultyLevels } from '@/drizzle/schema';
-import difficultyColors from '@/utils/difficultyColors';
 
 type ListItemProps = {
   item: WishlistItem;
