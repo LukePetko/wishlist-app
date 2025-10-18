@@ -48,9 +48,7 @@ const ListItem: FC<ListItemProps> = ({ item, className, showSeparator }) => {
               {item.isBought && (
                 <Tooltip>
                   <TooltipTrigger>
-                    <Badge className="!p-1 text-xs" variant="destructive">
-                      Kúpené
-                    </Badge>
+                    <Badge className="!p-1 text-xs bg-red-600">Kúpené</Badge>
                   </TooltipTrigger>
                   <TooltipContent className="flex flex-col gap-1">
                     Tento darček už bol kúpený a už som ho aj dostal :)
