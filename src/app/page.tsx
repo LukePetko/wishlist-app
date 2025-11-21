@@ -167,6 +167,9 @@ const Wishlist = async ({
           Vitaj na mojom zozname želaní 🥰
         </p>
       </div>
+      <p className="text-md text-gray-500 pb-12">
+        Ceny môžu byť aj nižšie, najmä pred Vianocami na Black Friday. 🎄
+      </p>
       <div className="flex w-full justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <Filters
