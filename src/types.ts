@@ -15,7 +15,7 @@ export type WishlistLink = typeof wishlistLinks.$inferSelect & {
 export type WishlistItem = typeof wishlistItems.$inferSelect & {
   links: WishlistLink[];
   isOrdered?: boolean;
-  lowestPrice: WishlistLink;
+  lowestPrice: WishlistLink | null;
   orders: (typeof wishlistOrders.$inferSelect)[];
 
   categories: (typeof categories.$inferSelect)[];

@@ -93,17 +93,20 @@ const Wishlist = async ({
 
   const processedData = await Promise.all(
     data.map(async (item) => {
-      const convertedLinks = await Promise.all(
-        item.links.map(async (link) => ({
-          ...link,
-          priceEur:
-            link.currency === 'EUR'
-              ? link.price
-              : (await convertToEur(+link.price, link.currency))
-                  .toFixed(2)
-                  .toString(),
-        })),
-      );
+      const convertedLinks =
+        (await Promise.all(
+          item.links.map(async (link) => ({
+            ...link,
+            priceEur:
+              link.currency === 'EUR'
+                ? link.price
+                : (
+                    await convertToEur(+link.price, link.currency)
+                  )
+                    .toFixed(2)
+                    .toString(),
+          })),
+        )) ?? [];
 
       const categories = item.categories.map((c) => c.category);
 
@@ -153,6 +156,9 @@ const Wishlist = async ({
 
   if (sort && sort[0] === 'lowestPrice') {
     processedData.sort((a, b) => {
+      if (!a.lowestPrice || !b.lowestPrice) {
+        return 0;
+      }
       if (sort[1] === 'asc') {
         return +a.lowestPrice - +b.lowestPrice;
       } else {

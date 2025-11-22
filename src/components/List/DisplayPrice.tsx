@@ -8,7 +8,7 @@ import ConditionalTooltip from '../ConditionalTooltip';
 import { cn } from '@/lib/utils';
 
 type DisplayPriceProps = {
-  link: WishlistLink;
+  link: WishlistLink | null;
   className?: string;
   displayConverted?: boolean;
 };
