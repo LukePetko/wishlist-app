@@ -18,6 +18,8 @@ const DisplayPrice: react.FC<DisplayPriceProps> = ({
   className,
   displayConverted,
 }) => {
+  if (!link) return null;
+
   return (
     <div className={cn('flex flex-col gap-2 items-end', className)}>
       <p className="text-sm text-gray-500">Cena</p>

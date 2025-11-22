@@ -107,12 +107,14 @@ const Wishlist = async ({
 
       const categories = item.categories.map((c) => c.category);
 
-      const lowestPrice = convertedLinks.reduce((acc, curr) => {
-        if (+acc.priceEur > +curr.priceEur) {
-          return curr;
-        }
-        return acc;
-      });
+      const lowestPrice = convertedLinks.length
+        ? convertedLinks.reduce((acc, curr) => {
+            if (+acc.priceEur > +curr.priceEur) {
+              return curr;
+            }
+            return acc;
+          })
+        : null;
 
       const orders = ENV.MOCK_ORDERS
         ? (mockOrders.find((o) => o.id === item.id)?.orders ?? [])
